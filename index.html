@@ -1,0 +1,1312 @@
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Raj Patel | Aerospace Engineering Portfolio</title>
+
+  <meta
+    name="description"
+    content="Portfolio of Raj Patel, an aerospace engineering postgraduate specialising in UAV systems, aircraft design, aerodynamics, propulsion and engineering research."
+  >
+
+  <style>
+    :root {
+      --background: #050b16;
+      --background-light: #0a1424;
+      --card: rgba(16, 31, 52, 0.82);
+      --card-border: rgba(117, 186, 255, 0.18);
+      --primary: #58a6ff;
+      --primary-light: #8ac4ff;
+      --text: #f4f8fc;
+      --muted: #a7b5c7;
+      --white: #ffffff;
+      --success: #54d6a1;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius: 20px;
+      --max-width: 1180px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(35, 117, 195, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(68, 155, 255, 0.1), transparent 25%),
+        var(--background);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(92%, var(--max-width));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 100px 0;
+    }
+
+    .section-label {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--primary-light);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 18px;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.15;
+    }
+
+    .section-description {
+      max-width: 760px;
+      margin-bottom: 48px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 100%;
+      background: rgba(5, 11, 22, 0.86);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 74px;
+    }
+
+    .logo {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .logo span {
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .hero {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 100vh;
+      padding: 130px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      position: absolute;
+      top: 12%;
+      right: -8%;
+      width: 560px;
+      height: 560px;
+      content: "";
+      background: radial-gradient(circle, rgba(71, 158, 255, 0.2), transparent 68%);
+      filter: blur(8px);
+    }
+
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      opacity: 0.2;
+      background-image:
+        linear-gradient(rgba(88, 166, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 166, 255, 0.08) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 26px;
+      padding: 8px 14px;
+      color: var(--primary-light);
+      background: rgba(88, 166, 255, 0.09);
+      border: 1px solid rgba(88, 166, 255, 0.22);
+      border-radius: 100px;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 16px var(--success);
+    }
+
+    .hero h1 {
+      max-width: 950px;
+      margin-bottom: 20px;
+      font-size: clamp(3.3rem, 10vw, 7.6rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero-role {
+      margin-bottom: 22px;
+      color: #dbe9f8;
+      font-size: clamp(1.2rem, 3vw, 1.75rem);
+      font-weight: 600;
+    }
+
+    .hero-description {
+      max-width: 760px;
+      margin-bottom: 34px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 45px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 22px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: transform 0.25s ease, background 0.25s ease, border 0.25s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+    }
+
+    .button-primary {
+      color: #04101e;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      box-shadow: 0 12px 30px rgba(88, 166, 255, 0.22);
+    }
+
+    .button-secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .quick-links a:hover {
+      color: var(--primary-light);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: -50px;
+      position: relative;
+      z-index: 4;
+    }
+
+    .stat-card {
+      padding: 26px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-number {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--primary-light);
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .about-copy p {
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .about-card {
+      padding: 30px;
+      background: linear-gradient(145deg, rgba(18, 39, 65, 0.92), rgba(8, 20, 36, 0.92));
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .about-card h3 {
+      margin-bottom: 22px;
+      font-size: 1.25rem;
+    }
+
+    .about-details {
+      display: grid;
+      gap: 18px;
+    }
+
+    .detail {
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .detail:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .detail-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary-light);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .detail-value {
+      color: var(--text);
+    }
+
+    .expertise-grid,
+    .projects-grid,
+    .skills-grid,
+    .membership-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      padding: 30px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(88, 166, 255, 0.5);
+    }
+
+    .card-icon {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 22px;
+      color: var(--primary-light);
+      background: rgba(88, 166, 255, 0.12);
+      border: 1px solid rgba(88, 166, 255, 0.24);
+      border-radius: 14px;
+      font-size: 1.5rem;
+    }
+
+    .card h3 {
+      margin-bottom: 12px;
+      font-size: 1.32rem;
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      padding: 6px 11px;
+      color: #cfe7ff;
+      background: rgba(88, 166, 255, 0.09);
+      border: 1px solid rgba(88, 166, 255, 0.18);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .project-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-number {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      color: rgba(255, 255, 255, 0.08);
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .project-type {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--primary-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .project-card h3 {
+      max-width: 80%;
+      margin-bottom: 14px;
+      font-size: 1.45rem;
+      line-height: 1.3;
+    }
+
+    .project-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 20px;
+      color: var(--success);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 880px;
+      margin-top: 30px;
+      padding-left: 34px;
+    }
+
+    .timeline::before {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      left: 7px;
+      width: 2px;
+      content: "";
+      background: linear-gradient(var(--primary), rgba(88, 166, 255, 0.08));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 38px;
+      padding: 27px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+    }
+
+    .timeline-item::before {
+      position: absolute;
+      top: 30px;
+      left: -34px;
+      width: 14px;
+      height: 14px;
+      content: "";
+      background: var(--primary);
+      border: 4px solid var(--background);
+      border-radius: 50%;
+      box-shadow: 0 0 18px rgba(88, 166, 255, 0.6);
+    }
+
+    .timeline-date {
+      margin-bottom: 6px;
+      color: var(--primary-light);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .timeline-item h3 {
+      margin-bottom: 5px;
+      font-size: 1.25rem;
+    }
+
+    .timeline-company {
+      display: block;
+      margin-bottom: 12px;
+      color: #d9e5f2;
+      font-weight: 600;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+    }
+
+    .skill-card h3 {
+      margin-bottom: 20px;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-list span {
+      padding: 10px 13px;
+      color: #dceeff;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+
+    .publication-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 30px;
+      align-items: center;
+      padding: 34px;
+      background:
+        linear-gradient(120deg, rgba(23, 54, 89, 0.95), rgba(9, 23, 41, 0.96));
+      border: 1px solid rgba(88, 166, 255, 0.26);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .publication-card h3 {
+      max-width: 760px;
+      margin: 8px 0 12px;
+      font-size: 1.45rem;
+      line-height: 1.35;
+    }
+
+    .publication-card p {
+      color: var(--muted);
+    }
+
+    .contact-box {
+      padding: 58px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(28, 70, 112, 0.85), rgba(8, 20, 36, 0.96));
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .contact-box h2 {
+      max-width: 780px;
+      margin: 0 auto 18px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.15;
+    }
+
+    .contact-box p {
+      max-width: 680px;
+      margin: 0 auto 30px;
+      color: #c3d4e6;
+    }
+
+    .contact-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    footer {
+      padding: 34px 0;
+      color: var(--muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.88rem;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .about-grid,
+      .expertise-grid,
+      .projects-grid,
+      .skills-grid,
+      .membership-grid,
+      .publication-card {
+        grid-template-columns: 1fr;
+      }
+
+      .publication-card .button {
+        width: fit-content;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .section {
+        padding: 75px 0;
+      }
+
+      .hero {
+        padding-top: 115px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+        margin-top: -20px;
+      }
+
+      .hero-buttons,
+      .quick-links {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .card,
+      .about-card,
+      .timeline-item {
+        padding: 23px;
+      }
+
+      .contact-box {
+        padding: 38px 22px;
+      }
+
+      .contact-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="container nav-container">
+      <a href="#home" class="logo">RAJ<span>PATEL</span></a>
+
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#expertise">Expertise</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero" id="home">
+    <div class="grid-lines"></div>
+
+    <div class="container hero-content">
+      <div class="eyebrow">
+        <span class="status-dot"></span>
+        Melbourne, Australia · Open to Aerospace Opportunities
+      </div>
+
+      <h1>Raj <span>Patel</span></h1>
+
+      <p class="hero-role">
+        Aerospace Engineering Postgraduate · UAV Systems · Aircraft Design · Research
+      </p>
+
+      <p class="hero-description">
+        I apply aerodynamic analysis, propulsion knowledge, simulation and
+        multidisciplinary engineering design to develop practical solutions for
+        aircraft and unmanned aerial systems.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#projects" class="button button-primary">Explore My Work</a>
+        <a href="#contact" class="button button-secondary">Contact Me</a>
+      </div>
+
+      <div class="quick-links">
+        <a href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">
+          LinkedIn ↗
+        </a>
+
+        <a href="https://github.com/rajpatel-aero" target="_blank">
+          GitHub ↗
+        </a>
+
+        <a href="https://orcid.org/0009-0000-7886-2864" target="_blank">
+          ORCID ↗
+        </a>
+
+        <a href="mailto:rajpatel.aero@gmail.com">
+          Email ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="container stats fade-in">
+      <div class="stat-card">
+        <span class="stat-number">2</span>
+        <span class="stat-label">Aerospace Engineering Degrees</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-number">7+</span>
+        <span class="stat-label">Engineering Projects</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-number">1</span>
+        <span class="stat-label">Published Research Study</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-number">2</span>
+        <span class="stat-label">National and Global Competitions</span>
+      </div>
+    </div>
+
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div class="about-copy fade-in">
+          <span class="section-label">About Me</span>
+
+          <h2 class="section-title">
+            Engineering ideas into practical aerospace solutions.
+          </h2>
+
+          <p>
+            I am currently pursuing a Master of Engineering in Aerospace at RMIT
+            University in Melbourne. I hold a Bachelor of Technology in
+            Aeronautical Engineering and have developed experience across aircraft
+            design, UAV systems, propulsion, aerodynamics, simulation and engineering
+            research.
+          </p>
+
+          <p>
+            My experience includes aerospace and robotic-system design, airframe
+            optimisation, technical calculations, prototype support, AI-based
+            aircraft fault diagnostics and experimental aerodynamic research.
+          </p>
+
+          <p>
+            I am particularly interested in multidisciplinary aircraft design,
+            high-performance UAVs, flight mechanics, propulsion integration and
+            data-driven aerospace engineering.
+          </p>
+        </div>
+
+        <div class="about-card fade-in">
+          <h3>Professional Profile</h3>
+
+          <div class="about-details">
+            <div class="detail">
+              <span class="detail-label">Current Study</span>
+              <span class="detail-value">
+                Master of Engineering (Aerospace), RMIT University
+              </span>
+            </div>
+
+            <div class="detail">
+              <span class="detail-label">Previous Qualification</span>
+              <span class="detail-value">
+                B.Tech in Aeronautical Engineering
+              </span>
+            </div>
+
+            <div class="detail">
+              <span class="detail-label">Core Interests</span>
+              <span class="detail-value">
+                UAVs, Aircraft Design, Aerodynamics and Propulsion
+              </span>
+            </div>
+
+            <div class="detail">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">Melbourne, Australia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="expertise">
+      <div class="container">
+        <span class="section-label">Engineering Expertise</span>
+
+        <h2 class="section-title">
+          Technical capability across the aircraft development process.
+        </h2>
+
+        <p class="section-description">
+          My work combines aerospace theory, simulation, design tools and technical
+          communication to support informed engineering decisions.
+        </p>
+
+        <div class="expertise-grid">
+          <article class="card fade-in">
+            <div class="card-icon">✈</div>
+            <h3>Aircraft Design</h3>
+            <p>
+              Aircraft configuration, mission requirements, component integration,
+              centre-of-gravity analysis and conceptual design.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Configuration Design</span>
+              <span class="tag">CG Analysis</span>
+              <span class="tag">Flight Performance</span>
+            </div>
+          </article>
+
+          <article class="card fade-in">
+            <div class="card-icon">⌁</div>
+            <h3>UAV Systems</h3>
+            <p>
+              UAV mission planning, propulsion selection, payload integration,
+              avionics evaluation and aircraft-system development.
+            </p>
+            <div class="tag-list">
+              <span class="tag">UAV Integration</span>
+              <span class="tag">Avionics</span>
+              <span class="tag">Mission Design</span>
+            </div>
+          </article>
+
+          <article class="card fade-in">
+            <div class="card-icon">◫</div>
+            <h3>Aerodynamics</h3>
+            <p>
+              Aerodynamic analysis of aircraft configurations, sonic jets, lifting
+              surfaces, stability and performance characteristics.
+            </p>
+            <div class="tag-list">
+              <span class="tag">XFLR5</span>
+              <span class="tag">ANSYS</span>
+              <span class="tag">CFD</span>
+            </div>
+          </article>
+
+          <article class="card fade-in">
+            <div class="card-icon">⚙</div>
+            <h3>Engineering Analysis</h3>
+            <p>
+              Numerical calculations, simulation, data analysis, technical reports
+              and engineering decision support using MATLAB, Python and Excel.
+            </p>
+            <div class="tag-list">
+              <span class="tag">MATLAB</span>
+              <span class="tag">Python</span>
+              <span class="tag">Data Analysis</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="container">
+        <span class="section-label">Selected Work</span>
+
+        <h2 class="section-title">
+          Engineering projects, research and competition experience.
+        </h2>
+
+        <p class="section-description">
+          Detailed project pages, calculations, images and results will be added as
+          the portfolio develops.
+        </p>
+
+        <div class="projects-grid">
+          <article class="card project-card fade-in">
+            <span class="project-number">01</span>
+            <span class="project-type">Current Capstone</span>
+            <h3>Jet-Propelled Unmanned Aerial System</h3>
+            <p>
+              Multidisciplinary development of a high-performance UAV involving
+              mission analysis, propulsion selection, aircraft layout, component
+              placement and centre-of-gravity assessment.
+            </p>
+            <div class="tag-list">
+              <span class="tag">UAV Design</span>
+              <span class="tag">Propulsion</span>
+              <span class="tag">Stability</span>
+            </div>
+            <div class="project-status">● Detailed case study coming soon</div>
+          </article>
+
+          <article class="card project-card fade-in">
+            <span class="project-number">02</span>
+            <span class="project-type">Machine Learning</span>
+            <h3>AI-Based Aircraft Fault Detection and Diagnostics</h3>
+            <p>
+              Development of a predictive-maintenance concept using aircraft engine
+              sensor data, Random Forest and LSTM methods to identify developing
+              faults.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Python</span>
+              <span class="tag">Random Forest</span>
+              <span class="tag">LSTM</span>
+            </div>
+          </article>
+
+          <article class="card project-card fade-in">
+            <span class="project-number">03</span>
+            <span class="project-type">Experimental Aerodynamics</span>
+            <h3>Decay Characteristics of Sonic Jets</h3>
+            <p>
+              Experimental investigation of circular and non-circular Mach 1 nozzle
+              jets, including pressure, velocity and potential-core decay behaviour.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Mach 1 Flow</span>
+              <span class="tag">Nozzle Analysis</span>
+              <span class="tag">Experiments</span>
+            </div>
+          </article>
+
+          <article class="card project-card fade-in">
+            <span class="project-number">04</span>
+            <span class="project-type">Published Research</span>
+            <h3>Effect of Canard Vertical Location on Aircraft Performance</h3>
+            <p>
+              Aerodynamic evaluation of three canard locations to compare aircraft
+              efficiency and stability, identifying the mid-canard configuration as
+              the preferred arrangement.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Canard Aircraft</span>
+              <span class="tag">Aerodynamics</span>
+              <span class="tag">Research</span>
+            </div>
+          </article>
+
+          <article class="card project-card fade-in">
+            <span class="project-number">05</span>
+            <span class="project-type">Propulsion Concept</span>
+            <h3>Supersonic Combustion with Cavity-Based Fuel Injection</h3>
+            <p>
+              Conceptual scramjet combustion study focused on cavity-based fuel
+              injection, flame stability and efficient high-speed propulsion.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Scramjet</span>
+              <span class="tag">Combustion</span>
+              <span class="tag">Propulsion</span>
+            </div>
+          </article>
+
+          <article class="card project-card fade-in">
+            <span class="project-number">06</span>
+            <span class="project-type">Competition</span>
+            <h3>SAE Aero Design and Aerothon Competitions</h3>
+            <p>
+              Supported avionics selection, aircraft-system integration, material
+              evaluation and technical analysis for competitive RC aircraft and UAV
+              development.
+            </p>
+            <div class="tag-list">
+              <span class="tag">Avionics Lead</span>
+              <span class="tag">RC Aircraft</span>
+              <span class="tag">Teamwork</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="container">
+        <span class="section-label">Experience and Education</span>
+
+        <h2 class="section-title">
+          A growing foundation in aerospace engineering and leadership.
+        </h2>
+
+        <div class="timeline">
+          <article class="timeline-item fade-in">
+            <div class="timeline-date">March 2025 – December 2026</div>
+            <h3>Master of Engineering (Aerospace)</h3>
+            <span class="timeline-company">
+              RMIT University · Melbourne, Australia
+            </span>
+            <p>
+              Advanced postgraduate study in aerospace engineering, design,
+              analysis, research and multidisciplinary project development.
+            </p>
+          </article>
+
+          <article class="timeline-item fade-in">
+            <div class="timeline-date">April 2024 – August 2024</div>
+            <h3>Mechanical Design Engineer Intern</h3>
+            <span class="timeline-company">
+              Soaron Aerospace Innovation Private Limited
+            </span>
+            <p>
+              Supported robotic-system design and testing, airframe optimisation,
+              prototype development and the preparation of detailed mechanical and
+              technical calculation reports.
+            </p>
+          </article>
+
+          <article class="timeline-item fade-in">
+            <div class="timeline-date">December 2020 – May 2024</div>
+            <h3>Bachelor of Technology in Aeronautical Engineering</h3>
+            <span class="timeline-company">
+              Institute of Aeronautical Engineering · Hyderabad, India
+            </span>
+            <p>
+              Developed a foundation in aerodynamics, propulsion, aircraft
+              structures, flight mechanics, design and experimental research.
+            </p>
+          </article>
+
+          <article class="timeline-item fade-in">
+            <div class="timeline-date">2022 – 2023</div>
+            <h3>Avionics Lead and Competition Team Member</h3>
+            <span class="timeline-company">SAE Aero Design · Team Lakshya</span>
+            <p>
+              Contributed to avionics selection, aircraft integration and
+              performance assessment, helping the team achieve 15th place globally
+              in SAE Aero Design East 2023.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="skills">
+      <div class="container">
+        <span class="section-label">Skills</span>
+
+        <h2 class="section-title">
+          Engineering tools and capabilities.
+        </h2>
+
+        <div class="skills-grid">
+          <article class="card skill-card fade-in">
+            <h3>Aerospace Engineering</h3>
+            <div class="skill-list">
+              <span>Aircraft Design</span>
+              <span>Aerodynamics</span>
+              <span>Flight Mechanics</span>
+              <span>Aircraft Propulsion</span>
+              <span>UAV Systems</span>
+              <span>Flight Performance</span>
+              <span>Composite Structures</span>
+            </div>
+          </article>
+
+          <article class="card skill-card fade-in">
+            <h3>Software and Analysis</h3>
+            <div class="skill-list">
+              <span>CATIA V5</span>
+              <span>Fusion 360</span>
+              <span>XFLR5</span>
+              <span>ANSYS</span>
+              <span>MATLAB</span>
+              <span>Python</span>
+              <span>Microsoft Excel</span>
+              <span>GitHub</span>
+            </div>
+          </article>
+
+          <article class="card skill-card fade-in">
+            <h3>Engineering Practice</h3>
+            <div class="skill-list">
+              <span>Product Development</span>
+              <span>Manufacturing Processes</span>
+              <span>Technical Calculations</span>
+              <span>Prototype Support</span>
+              <span>Technical Documentation</span>
+              <span>Data Analysis</span>
+            </div>
+          </article>
+
+          <article class="card skill-card fade-in">
+            <h3>Professional Capability</h3>
+            <div class="skill-list">
+              <span>Project Leadership</span>
+              <span>Research</span>
+              <span>Team Collaboration</span>
+              <span>Problem Solving</span>
+              <span>Project Management</span>
+              <span>Technical Communication</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="container">
+        <span class="section-label">Research and Publications</span>
+
+        <h2 class="section-title">
+          Research-driven engineering development.
+        </h2>
+
+        <div class="publication-card fade-in">
+          <div>
+            <span class="project-type">Featured Publication</span>
+
+            <h3>
+              Effect of Vertical Location of a Canard at Three Different Positions
+              to Make an Airplane Eco-Friendly
+            </h3>
+
+            <p>
+              This research evaluated aerodynamic performance and stability across
+              multiple canard arrangements, with the mid-canard configuration
+              identified as the most efficient option in the study.
+            </p>
+          </div>
+
+          <a
+            href="https://orcid.org/0009-0000-7886-2864"
+            target="_blank"
+            class="button button-primary"
+          >
+            View ORCID
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <span class="section-label">Professional Engagement</span>
+
+        <h2 class="section-title">
+          Memberships, leadership and industry connection.
+        </h2>
+
+        <div class="membership-grid">
+          <article class="card fade-in">
+            <h3>Engineers Australia</h3>
+            <p>
+              Student member engaging with Australia's professional engineering
+              community and continuing professional development.
+            </p>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Royal Aeronautical Society</h3>
+            <p>
+              Committee member connected with the UK and Australian aerospace
+              professional community.
+            </p>
+          </article>
+
+          <article class="card fade-in">
+            <h3>SAE International</h3>
+            <p>
+              Former student member and avionics lead with practical competition
+              experience in aircraft-system development.
+            </p>
+          </article>
+
+          <article class="card fade-in">
+            <h3>Engineering Leadership</h3>
+            <p>
+              Experience as a major-project team lead, avionics lead and engineering
+              competition team member.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-box fade-in">
+          <span class="section-label">Contact</span>
+
+          <h2>
+            Interested in discussing an aerospace engineering opportunity?
+          </h2>
+
+          <p>
+            I am open to graduate, internship and early-career opportunities in
+            aerospace engineering, UAV development, aircraft design, analysis,
+            research and aviation technology.
+          </p>
+
+          <div class="contact-buttons">
+            <a
+              href="mailto:rajpatel.aero@gmail.com"
+              class="button button-primary"
+            >
+              Email Me
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/rajpatel-aero04/"
+              target="_blank"
+              class="button button-secondary"
+            >
+              LinkedIn
+            </a>
+
+            <a
+              href="https://github.com/rajpatel-aero"
+              target="_blank"
+              class="button button-secondary"
+            >
+              GitHub
+            </a>
+
+            <a
+              href="https://orcid.org/0009-0000-7886-2864"
+              target="_blank"
+              class="button button-secondary"
+            >
+              ORCID
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <p>© <span id="year"></span> Raj Patel. All rights reserved.</p>
+      <p>Aerospace Engineering Portfolio · Melbourne, Australia</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.12
+      }
+    );
+
+    document.querySelectorAll(".fade-in").forEach((element) => {
+      observer.observe(element);
+    });
+  </script>
+
+</body>
+</html>
