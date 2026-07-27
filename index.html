@@ -1,991 +1,335 @@
 from pathlib import Path
-import shutil, subprocess, textwrap, zipfile, os
+import shutil, zipfile, html as htmlmod
 
-base = Path("/mnt/data/rajpatel-portfolio")
-images = base / "images"
-base.mkdir(exist_ok=True)
-images.mkdir(exist_ok=True)
+root = Path("/mnt/data/rajpatel-portfolio-v2")
+assets = root / "assets"
+css_dir = assets / "css"
+js_dir = assets / "js"
+img_dir = assets / "images"
+projects_dir = root / "projects"
 
-# Copy available uploaded project images.
-image_map = {
-    "/mnt/data/1d7ab879-1ff0-4105-9e29-feb5a95f2824.jpeg": "project-6-aircraft-with-raj.jpg",
-    "/mnt/data/fde02174-f054-4e5a-89b1-61bec8d22d8e.jpeg": "project-6-avionics-profile.jpg",
-    "/mnt/data/03e4e534-b16e-4776-b0cb-90485815a388.jpeg": "project-6-lakeland-closeup.jpg",
-    "/mnt/data/57dc4ea4-7669-44ab-9d9b-dddeb147b272.png": "project-6-aircraft-lakeland.png",
-    "/mnt/data/6f5e1e0d-324b-4627-b763-5d39ce4963f5.png": "project-7-cad.png",
-    "/mnt/data/4cff775f-78f4-4e2c-8827-f8ada5b613fb.png": "project-7-team.png",
-    "/mnt/data/fd68194a-4688-482f-b589-1ddcfb73179e.png": "project-8-completed-aircraft.png",
-    "/mnt/data/4a5c551b-1bb4-414f-bbb5-f24e890b85ab.png": "project-8-building.png",
-    "/mnt/data/3176a34b-75ab-43e1-97ae-688028f4ed9a.jpeg": "project-8-flight-test.jpg",
+for d in [css_dir, js_dir, img_dir, projects_dir]:
+    d.mkdir(parents=True, exist_ok=True)
+
+# Copy available images from the previous generated package when available.
+source_img_dir = Path("/mnt/data/rajpatel-portfolio/images")
+if source_img_dir.exists():
+    for p in source_img_dir.iterdir():
+        if p.is_file():
+            shutil.copy2(p, img_dir / p.name)
+
+# Shared CSS
+css = r"""
+:root{
+  --bg:#050a13;--bg2:#091426;--panel:#0d1c31;--panel2:#102742;
+  --line:rgba(127,188,255,.18);--primary:#65b5ff;--primary2:#a8d8ff;
+  --text:#f5f8fc;--muted:#a7b7ca;--success:#6ee7b7;--warning:#fbbf24;
+  --max:1180px;--radius:22px;--shadow:0 24px 70px rgba(0,0,0,.35)
 }
-for src, dst in image_map.items():
-    p = Path(src)
-    if p.exists():
-        shutil.copy2(p, images / dst)
+*{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:
+radial-gradient(circle at 15% 4%,rgba(51,139,230,.18),transparent 28rem),
+radial-gradient(circle at 90% 13%,rgba(51,139,230,.1),transparent 24rem),var(--bg);line-height:1.7}
+a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
+.container{width:min(92%,var(--max));margin:auto}
+nav{position:sticky;top:0;z-index:1000;background:rgba(5,10,19,.88);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+.nav-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:900;letter-spacing:.08em}.brand span{color:var(--primary)}
+.nav-links{display:flex;gap:24px;list-style:none;color:var(--muted);font-size:.92rem;font-weight:700}
+.nav-links a:hover{color:var(--text)}
+.hero{padding:115px 0 78px;min-height:78vh;display:flex;align-items:center}
+.hero-content{max-width:900px}
+.eyebrow{display:inline-flex;padding:8px 14px;border:1px solid rgba(101,181,255,.25);border-radius:999px;background:rgba(101,181,255,.08);color:var(--primary2);font-weight:800;font-size:.86rem;margin-bottom:24px}
+h1{font-size:clamp(3.5rem,10vw,7.2rem);line-height:.94;letter-spacing:-.06em;margin-bottom:20px}
+h1 span{color:var(--primary)}
+.hero-role{font-size:clamp(1.15rem,2.8vw,1.62rem);font-weight:700;color:#dbeafe;margin-bottom:18px}
+.hero p,.section-intro,.project-card p,.detail-copy{color:var(--muted)}
+.actions{display:flex;gap:13px;flex-wrap:wrap;margin-top:30px}
+.btn{min-height:50px;padding:0 22px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:850;border:1px solid transparent;transition:.25s}
+.btn:hover{transform:translateY(-3px)}
+.btn-primary{color:#03101d;background:linear-gradient(135deg,var(--primary2),var(--primary));box-shadow:0 15px 38px rgba(101,181,255,.2)}
+.btn-secondary{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+section{padding:92px 0}
+.label{display:inline-block;color:var(--primary2);font-weight:850;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem;margin-bottom:10px}
+.section-title{font-size:clamp(2rem,5vw,3.3rem);line-height:1.14;max-width:850px;margin-bottom:16px}
+.section-intro{max-width:780px;margin-bottom:38px}
+.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.project-card{background:linear-gradient(145deg,rgba(13,28,49,.94),rgba(7,18,33,.98));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:.3s}
+.project-card:hover{transform:translateY(-7px);border-color:rgba(101,181,255,.5)}
+.card-image{height:220px;background:linear-gradient(145deg,#153252,#07111f);overflow:hidden;position:relative}
+.card-image img{height:100%;width:100%;object-fit:cover;transition:.5s}
+.project-card:hover img{transform:scale(1.04)}
+.image-placeholder{height:100%;display:grid;place-items:center;text-align:center;padding:25px;color:#d8ecff;background:
+radial-gradient(circle at 45% 32%,rgba(101,181,255,.3),transparent 40%),linear-gradient(145deg,#153252,#07111f)}
+.card-body{padding:24px}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.badge{font-size:.72rem;font-weight:850;padding:5px 9px;border-radius:999px;border:1px solid rgba(101,181,255,.25);background:rgba(101,181,255,.09);color:#cfeaff}
+.badge.confidential{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);color:#ffe2a0}
+.project-card h3{font-size:1.25rem;line-height:1.3;margin-bottom:10px}
+.card-link{display:inline-block;margin-top:18px;color:var(--primary2);font-weight:850}
+.detail-hero{padding:88px 0 46px}
+.back-link{display:inline-block;color:var(--primary2);font-weight:800;margin-bottom:24px}
+.detail-title{font-size:clamp(2.3rem,6vw,4.6rem);line-height:1.05;letter-spacing:-.04em;max-width:1000px;margin-bottom:16px}
+.detail-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:start}
+.detail-cover{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--panel)}
+.detail-cover img{width:100%;max-height:560px;object-fit:cover}
+.detail-panel{padding:30px;background:linear-gradient(145deg,rgba(13,28,49,.95),rgba(7,18,33,.98));border:1px solid var(--line);border-radius:var(--radius)}
+.detail-panel h2{font-size:1.3rem;margin:24px 0 10px}.detail-panel h2:first-child{margin-top:0}
+.detail-panel ul{padding-left:20px;color:var(--muted)}.detail-panel li{margin-bottom:7px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.tag{font-size:.76rem;font-weight:750;padding:6px 10px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.04);color:#dceeff}
+.result{margin-top:22px;padding:15px 17px;border-left:3px solid var(--success);background:rgba(110,231,183,.07);border-radius:0 12px 12px 0;color:#dcfff1}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}.gallery img{height:250px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.1);cursor:zoom-in}
+footer{padding:30px 0;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.88rem}
+.footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:24px}.lightbox.open{display:flex}.lightbox img{max-width:95vw;max-height:90vh;border-radius:12px}.lightbox button{position:absolute;top:18px;right:22px;color:white;background:none;border:0;font-size:2rem;cursor:pointer}
+@media(max-width:950px){.project-grid{grid-template-columns:repeat(2,1fr)}.detail-layout{grid-template-columns:1fr}}
+@media(max-width:650px){.nav-links{display:none}.hero{min-height:auto}.project-grid{grid-template-columns:1fr}.actions{flex-direction:column}.btn{width:100%}.gallery{grid-template-columns:1fr}.gallery img{height:230px}}
+"""
+(css_dir / "style.css").write_text(css, encoding="utf-8")
 
-# Render selected pages from the Wing Aerodynamic Design report.
-pdf = Path("/mnt/data/AERO2563Assignments4155740AmulyaBagale (3).pdf")
-render_dir = Path("/mnt/data/_wing_renders")
-render_dir.mkdir(exist_ok=True)
-if pdf.exists():
-    subprocess.run([
-        "python", "/home/oai/skills/pdfs/scripts/render_pdf.py",
-        str(pdf), "--out_dir", str(render_dir), "--dpi", "140"
-    ], check=True)
-    # pages are 1-indexed in filenames from render script
-    selected = {
-        10: "project-9-airfoil-comparison.png",
-        11: "project-9-pressure-comparison.png",
-        20: "project-9-flap-pressure.png",
-        28: "project-9-optimization-convergence.png",
-        29: "project-9-final-wing.png",
-        32: "project-9-range-improvement.png",
-    }
-    rendered = sorted(render_dir.glob("*.png"))
-    for page_num, dst in selected.items():
-        # Try common naming conventions.
-        candidates = [p for p in rendered if f"{page_num:03d}" in p.stem or f"page_{page_num}" in p.stem or p.stem.endswith(str(page_num))]
-        if candidates:
-            shutil.copy2(candidates[0], images / dst)
-        elif len(rendered) >= page_num:
-            shutil.copy2(rendered[page_num-1], images / dst)
+js = r"""
+document.querySelectorAll('.gallery img').forEach(img=>{
+  img.addEventListener('click',()=>{
+    const box=document.getElementById('lightbox');
+    const target=box.querySelector('img');
+    target.src=img.src;target.alt=img.alt;box.classList.add('open');
+  });
+});
+const lb=document.getElementById('lightbox');
+if(lb){
+  lb.addEventListener('click',e=>{if(e.target===lb||e.target.tagName==='BUTTON')lb.classList.remove('open')});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open')});
+}
+document.getElementById('year').textContent=new Date().getFullYear();
+"""
+(js_dir / "main.js").write_text(js, encoding="utf-8")
 
-html = r'''<!DOCTYPE html>
+projects = [
+{
+"slug":"jet-propelled-uas",
+"title":"Design and Development of a Jet-Propelled Unmanned Aerial System",
+"badges":["Featured Capstone","Industry Collaboration · Confidential"],
+"category":"UAV Design · Propulsion · Systems Integration",
+"summary":"A multidisciplinary capstone focused on the conceptual design and systems integration of a compact jet-propelled unmanned aerial system.",
+"role":"Propulsion and systems-integration contributor",
+"contrib":["Propulsion-system evaluation and selection.","Fuel-system integration studies and mission fuel assessment.","Weight estimation, component placement and centre-of-gravity analysis.","Servo torque calculations and MATLAB-based analysis.","Technical documentation and design justification."],
+"skills":["UAV Design","Propulsion","Weight & Balance","CG Analysis","Flight Stability","MATLAB","XFLR5"],
+"result":"Only a high-level overview is shown. Confidential dimensions, layouts, calculations and proprietary design information are intentionally withheld.",
+"image":None,"gallery":[]
+},
+{
+"slug":"ai-aircraft-maintenance",
+"title":"AI-Based Aircraft Fault Detection and Diagnostics",
+"badges":["Published Research","Digital Aviation"],
+"category":"AI · Aircraft Maintenance · Research",
+"summary":"Research examining how AI, AR and VR can support aircraft maintenance training and operations through smarter diagnostics, immersive instruction and improved decision support.",
+"role":"Researcher and co-author",
+"contrib":["Reviewed AI, AR and VR applications in aircraft maintenance.","Analysed maintenance workflows and emerging digital technologies.","Developed an innovation proposal for integrated maintenance support.","Produced technical research writing and engineering recommendations."],
+"skills":["Aircraft Maintenance","Artificial Intelligence","AR/VR","Human Factors","Research Writing"],
+"result":"Published research is available through ResearchGate.",
+"link":"https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations",
+"image":None,"gallery":[]
+},
+{
+"slug":"wing-aerodynamic-design",
+"title":"Wing Aerodynamic Design",
+"badges":["RMIT University","Advanced Aerodynamics"],
+"category":"Aerodynamics · Aircraft Performance",
+"summary":"Aerodynamic optimisation of the Bombardier Challenger 3500 wing to improve cruise efficiency, take-off performance and predicted aircraft range.",
+"role":"Responsible for flap optimisation, finite-wing design and range recalculation",
+"contrib":["Optimised the take-off flap configuration and assessed lift, pitching moment and pressure gradients.","Optimised finite-wing twist distribution to reduce induced drag.","Compared 2-D airfoil and 3-D finite-wing aerodynamic behaviour.","Recalculated aircraft range using improved aerodynamic coefficients.","Prepared technical presentation material."],
+"skills":["Wing Design","Airfoil Optimisation","Flap Design","Finite-Wing Theory","MATLAB","Breguet Range"],
+"result":"Improved Oswald efficiency from 0.80 to 0.882, increased L/D from 39.9 to 45.15 and predicted approximately 13.5% greater range.",
+"image":"project-9-final-wing.png","gallery":["project-9-airfoil-comparison.png","project-9-pressure-comparison.png","project-9-flap-pressure.png","project-9-range-improvement.png"]
+},
+{
+"slug":"canard-location-research",
+"title":"Effect of Vertical location canard with three different locations to make Airplane Eco friendly",
+"badges":["Published Research","Aircraft Stability"],
+"category":"Aerodynamics · Stability · Research",
+"summary":"Published study comparing three vertical canard locations and evaluating their effect on aircraft lift, drag, stability and efficiency.",
+"role":"Research contributor and co-author",
+"contrib":["Supported aircraft configuration and canard-position modelling.","Performed aerodynamic and stability analysis using XFLR5.","Compared lift, drag and efficiency across three configurations.","Evaluated winglet and vertical-tail effects.","Co-authored the published research."],
+"skills":["Canard Aircraft","XFLR5","Stability","Lift & Drag","Winglets","Research Writing"],
+"result":"The intermediate canard location was identified as the preferred arrangement among the configurations analysed.",
+"image":None,"gallery":[]
+},
+{
+"slug":"supersonic-combustion",
+"title":"Supersonic Combustion with cavity-based Fuel Injection",
+"badges":["Academic Project","Scramjet Propulsion"],
+"category":"Propulsion · High-Speed Aerodynamics",
+"summary":"Design-focused investigation of a scramjet engine using cavity-based fuel injection to support stable combustion under supersonic flow conditions.",
+"role":"Design and research contributor",
+"contrib":["Developed the conceptual scramjet and cavity-based injection arrangement.","Studied combustion stability and fuel-air mixing at supersonic speeds.","Evaluated approaches for improving efficiency and reducing fuel consumption.","Connected high-speed propulsion concepts with sustainable aviation objectives."],
+"skills":["Scramjet","Supersonic Combustion","Fuel Injection","High-Speed Aerodynamics","Sustainable Propulsion"],
+"result":"The project developed practical understanding of high-speed combustion, fuel-air mixing and propulsion design.",
+"image":None,"gallery":[]
+},
+{
+"slug":"sonic-jet-decay",
+"title":"Decay Characteristics of Sonic Jets",
+"badges":["Major Research Project","CFD"],
+"category":"CFD · Compressible Flow · Propulsion",
+"summary":"Investigation of sonic jets issuing from circular and non-circular converging nozzles, focusing on velocity decay, pressure behaviour, mixing and potential-core characteristics.",
+"role":"CFD and aerodynamic analysis contributor",
+"contrib":["Designed circular and non-circular nozzle geometries.","Developed computational meshes and compressible-flow simulations.","Analysed pressure, velocity, Mach number and jet-decay behaviour.","Compared aerodynamic performance across multiple nozzle configurations.","Interpreted results and prepared the engineering report."],
+"skills":["ANSYS CFX","ICEM CFD","Compressible Flow","Nozzle Design","Jet Propulsion","Data Analysis"],
+"result":"Compared six nozzle configurations to understand how geometry influences sonic-jet decay and mixing.",
+"image":None,"gallery":[]
+},
+{
+"slug":"sae-aero-design-east-2023",
+"title":"SAE International AERO DESIGN EAST 2023 Competition",
+"badges":["International Competition","Regular Class RC Aircraft"],
+"category":"Aircraft Design · Avionics · Competition",
+"summary":"Participated with Team IARE Lakshya in SAE Aero Design East 2023 in Lakeland, Florida, contributing to a payload-focused Regular Class RC aircraft.",
+"role":"Avionics Lead",
+"contrib":["Led avionics-system selection and supported onboard electronic integration.","Performed component trade-off studies against competition constraints.","Contributed to technical documentation and design-report preparation.","Supported performance evaluation, prototype testing and design validation.","Collaborated with aerodynamic, structural, fabrication and testing teams."],
+"skills":["Avionics Integration","RC Aircraft","Systems Engineering","Trade Studies","XFLR5","MATLAB","ANSYS"],
+"result":"Practical experience across conceptual design, systems integration, prototype development and international competition delivery.",
+"image":"project-6-aircraft-lakeland.png","gallery":["project-6-aircraft-with-raj.jpg","project-6-lakeland-closeup.jpg","project-6-avionics-profile.jpg","project-6-aircraft-lakeland.png"]
+},
+{
+"slug":"sae-india-aerothon",
+"title":"SAE India AEROTHON COMPETITION",
+"badges":["National Competition","Autonomous Multirotor UAV"],
+"category":"UAV · Avionics · Competition",
+"summary":"Contributed to Team IARE Lakshya's design of an autonomous multirotor UAV for target identification and precision payload delivery.",
+"role":"Avionics Technician",
+"contrib":["Supported selection of the flight controller, GPS, telemetry, cameras and companion computer.","Conducted trade-off analysis for avionics and communication subsystems.","Assisted with material evaluation and system-performance assessment.","Supported autonomous-flight and payload-delivery architecture.","Contributed to technical documentation and multidisciplinary design reviews."],
+"skills":["UAV Avionics","Pixhawk Cube Orange","Raspberry Pi","GPS","Telemetry","Autonomous Flight"],
+"result":"Developed practical understanding of autonomous UAV architecture, subsystem selection and competition-driven systems engineering.",
+"image":"project-7-team.png","gallery":["project-7-cad.png","project-7-team.png"]
+},
+{
+"slug":"rc-plane-modelling",
+"title":"RC Plane Modelling and Flight Test",
+"badges":["Foundational Project","Hands-on Aeromodelling"],
+"category":"Aircraft Fabrication · Flight Testing",
+"summary":"My first hands-on fixed-wing aeromodelling project, covering design, fabrication, assembly, trimming and flight testing of an electrically powered RC aircraft.",
+"role":"Design, fabrication and flight-test contributor",
+"contrib":["Fabricated and assembled the lightweight aircraft structure.","Installed propulsion, receiver and control-surface systems.","Balanced the centre of gravity and completed pre-flight inspections.","Troubleshot structural and control issues through iterative modification.","Participated in flight testing and handling evaluation."],
+"skills":["Aeromodelling","Aircraft Assembly","Flight Testing","CG Balancing","Electric Propulsion","Troubleshooting"],
+"result":"The project built the practical foundation that led to later participation in university aerospace design teams and competitions.",
+"image":"project-8-flight-test.jpg","gallery":["project-8-completed-aircraft.png","project-8-building.png","project-8-flight-test.jpg"]
+}
+]
+
+def img_or_placeholder(project, rel_prefix=""):
+    if project["image"] and (img_dir / project["image"]).exists():
+        return f'<img src="{rel_prefix}assets/images/{project["image"]}" alt="{htmlmod.escape(project["title"])}">'
+    return f'<div class="image-placeholder"><div><strong>{htmlmod.escape(project["badges"][0])}</strong><br>Project image will be added later.</div></div>'
+
+cards = []
+for p in projects:
+    badges = "".join(f'<span class="badge{" confidential" if "Confidential" in b else ""}">{htmlmod.escape(b)}</span>' for b in p["badges"])
+    cards.append(f"""
+    <article class="project-card">
+      <div class="card-image">{img_or_placeholder(p)}</div>
+      <div class="card-body">
+        <div class="meta">{badges}</div>
+        <h3>{htmlmod.escape(p["title"])}</h3>
+        <p>{htmlmod.escape(p["summary"])}</p>
+        <a class="card-link" href="projects/{p["slug"]}.html">View Project →</a>
+      </div>
+    </article>
+    """)
+
+index = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Raj Patel's aerospace engineering portfolio featuring UAV design, aerodynamics, propulsion, avionics, research and aircraft performance projects.">
-  <title>Raj Patel | Aerospace Engineering Portfolio</title>
-
-  <style>
-    :root {
-      --bg: #050a13;
-      --bg-2: #091426;
-      --panel: rgba(13, 28, 49, 0.88);
-      --panel-2: rgba(17, 39, 67, 0.76);
-      --line: rgba(130, 190, 255, 0.18);
-      --primary: #65b5ff;
-      --primary-2: #9ed2ff;
-      --text: #f5f8fc;
-      --muted: #a7b7ca;
-      --success: #6ee7b7;
-      --warning: #fbbf24;
-      --max: 1180px;
-      --radius: 22px;
-      --shadow: 0 25px 70px rgba(0, 0, 0, 0.38);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 18% 4%, rgba(51, 139, 230, 0.18), transparent 28rem),
-        radial-gradient(circle at 90% 13%, rgba(51, 139, 230, 0.10), transparent 24rem),
-        var(--bg);
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .18;
-      background-image:
-        linear-gradient(rgba(101,181,255,.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(101,181,255,.08) 1px, transparent 1px);
-      background-size: 52px 52px;
-      mask-image: linear-gradient(to bottom, #000, transparent 75%);
-    }
-
-    a { color: inherit; text-decoration: none; }
-    img { width: 100%; display: block; }
-    button { font: inherit; }
-
-    .container {
-      width: min(92%, var(--max));
-      margin: 0 auto;
-    }
-
-    nav {
-      position: fixed;
-      z-index: 1000;
-      top: 0;
-      width: 100%;
-      background: rgba(5, 10, 19, .86);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(18px);
-    }
-
-    .nav-inner {
-      min-height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 22px;
-    }
-
-    .brand {
-      font-weight: 900;
-      letter-spacing: .08em;
-    }
-
-    .brand span { color: var(--primary); }
-
-    .nav-links {
-      display: flex;
-      gap: 25px;
-      list-style: none;
-      color: var(--muted);
-      font-size: .92rem;
-      font-weight: 650;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    .hero {
-      min-height: 92vh;
-      display: flex;
-      align-items: center;
-      padding: 130px 0 90px;
-      position: relative;
-    }
-
-    .hero-content { max-width: 900px; position: relative; z-index: 2; }
-
-    .availability {
-      width: fit-content;
-      padding: 8px 14px;
-      margin-bottom: 26px;
-      border: 1px solid rgba(101,181,255,.25);
-      border-radius: 999px;
-      color: var(--primary-2);
-      background: rgba(101,181,255,.08);
-      font-size: .86rem;
-      font-weight: 750;
-    }
-
-    .hero h1 {
-      font-size: clamp(3.5rem, 10vw, 7.4rem);
-      line-height: .94;
-      letter-spacing: -.065em;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 span { color: var(--primary); }
-
-    .hero-role {
-      color: #dbeafe;
-      font-size: clamp(1.15rem, 2.8vw, 1.65rem);
-      font-weight: 650;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      max-width: 760px;
-      color: var(--muted);
-      font-size: 1.08rem;
-      margin-bottom: 34px;
-    }
-
-    .actions, .socials {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 13px;
-    }
-
-    .actions { margin-bottom: 34px; }
-
-    .btn {
-      min-height: 50px;
-      padding: 0 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      font-weight: 800;
-      transition: .25s ease;
-    }
-
-    .btn:hover { transform: translateY(-3px); }
-
-    .btn-primary {
-      color: #03101d;
-      background: linear-gradient(135deg, var(--primary-2), var(--primary));
-      box-shadow: 0 15px 38px rgba(101,181,255,.2);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,.04);
-      border-color: rgba(255,255,255,.14);
-    }
-
-    .socials {
-      color: var(--muted);
-      font-size: .94rem;
-      font-weight: 650;
-    }
-
-    .socials a:hover { color: var(--primary-2); }
-
-    section { padding: 96px 0; }
-
-    .label {
-      display: inline-block;
-      margin-bottom: 12px;
-      color: var(--primary-2);
-      letter-spacing: .17em;
-      text-transform: uppercase;
-      font-size: .78rem;
-      font-weight: 850;
-    }
-
-    .section-title {
-      font-size: clamp(2.1rem, 5vw, 3.35rem);
-      line-height: 1.12;
-      max-width: 850px;
-      margin-bottom: 18px;
-    }
-
-    .section-intro {
-      color: var(--muted);
-      max-width: 780px;
-      margin-bottom: 44px;
-      font-size: 1.03rem;
-    }
-
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
-    .filter-btn {
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--muted);
-      background: rgba(255,255,255,.035);
-      padding: 8px 13px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 750;
-    }
-
-    .filter-btn.active,
-    .filter-btn:hover {
-      color: #06111f;
-      background: var(--primary-2);
-      border-color: transparent;
-    }
-
-    .projects {
-      display: grid;
-      gap: 28px;
-    }
-
-    .project {
-      display: grid;
-      grid-template-columns: minmax(300px, .82fr) minmax(0, 1.18fr);
-      overflow: hidden;
-      background: linear-gradient(145deg, var(--panel), rgba(7,18,33,.96));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      transition: transform .3s ease, border-color .3s ease;
-    }
-
-    .project:hover {
-      transform: translateY(-6px);
-      border-color: rgba(101,181,255,.48);
-    }
-
-    .project-media {
-      min-height: 370px;
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 40% 30%, rgba(101,181,255,.28), transparent 45%),
-        linear-gradient(145deg, #132c4c, #07111f);
-    }
-
-    .project-media img {
-      height: 100%;
-      object-fit: cover;
-      transition: transform .6s ease;
-    }
-
-    .project:hover .project-media img { transform: scale(1.035); }
-
-    .placeholder {
-      height: 100%;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 35px;
-      color: #d9edff;
-    }
-
-    .placeholder strong {
-      display: block;
-      font-size: 1.25rem;
-      margin-bottom: 8px;
-    }
-
-    .project-content { padding: 34px; }
-
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-bottom: 17px;
-    }
-
-    .badge {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(101,181,255,.24);
-      background: rgba(101,181,255,.09);
-      color: #cce8ff;
-      font-size: .76rem;
-      font-weight: 800;
-    }
-
-    .badge.confidential {
-      color: #ffe4a5;
-      border-color: rgba(251,191,36,.28);
-      background: rgba(251,191,36,.08);
-    }
-
-    .project h3 {
-      font-size: clamp(1.45rem, 3vw, 2rem);
-      line-height: 1.25;
-      margin-bottom: 12px;
-    }
-
-    .project-summary {
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    .subheading {
-      margin-top: 18px;
-      margin-bottom: 8px;
-      color: #eaf4ff;
-      font-size: .84rem;
-      text-transform: uppercase;
-      letter-spacing: .11em;
-      font-weight: 850;
-    }
-
-    .contributions {
-      color: var(--muted);
-      padding-left: 20px;
-      margin-bottom: 18px;
-    }
-
-    .contributions li { margin-bottom: 5px; }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tag {
-      padding: 6px 10px;
-      border-radius: 9px;
-      color: #dceeff;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.1);
-      font-size: .77rem;
-      font-weight: 700;
-    }
-
-    .result {
-      margin-top: 19px;
-      padding: 14px 16px;
-      border-left: 3px solid var(--success);
-      background: rgba(110,231,183,.065);
-      color: #d9fff0;
-      border-radius: 0 12px 12px 0;
-      font-size: .91rem;
-    }
-
-    .gallery {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding: 0 18px 18px;
-    }
-
-    .gallery img {
-      height: 180px;
-      object-fit: cover;
-      border-radius: 13px;
-      border: 1px solid rgba(255,255,255,.10);
-      cursor: zoom-in;
-    }
-
-    .contact-card {
-      padding: 58px;
-      text-align: center;
-      border: 1px solid rgba(101,181,255,.28);
-      border-radius: 28px;
-      background: linear-gradient(135deg, rgba(25,67,109,.9), rgba(7,18,33,.98));
-      box-shadow: var(--shadow);
-    }
-
-    .contact-card p {
-      color: #c0d3e7;
-      max-width: 700px;
-      margin: 0 auto 28px;
-    }
-
-    footer {
-      padding: 30px 0;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: .88rem;
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      inset: 0;
-      padding: 25px;
-      background: rgba(0,0,0,.9);
-      align-items: center;
-      justify-content: center;
-    }
-
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 95vw; max-height: 90vh; width: auto; border-radius: 12px; }
-    .lightbox button {
-      position: absolute;
-      top: 18px;
-      right: 22px;
-      border: 0;
-      color: white;
-      background: transparent;
-      font-size: 2rem;
-      cursor: pointer;
-    }
-
-    .fade {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: .7s ease;
-    }
-
-    .fade.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    @media (max-width: 900px) {
-      .nav-links { display: none; }
-      .project { grid-template-columns: 1fr; }
-      .project-media { min-height: 310px; }
-      .gallery { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 600px) {
-      section { padding: 76px 0; }
-      .hero { min-height: auto; }
-      .actions, .socials { flex-direction: column; align-items: stretch; }
-      .btn { width: 100%; }
-      .project-content { padding: 24px; }
-      .project-media { min-height: 250px; }
-      .gallery { grid-template-columns: 1fr; }
-      .gallery img { height: 230px; }
-      .contact-card { padding: 38px 22px; }
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Raj Patel aerospace engineering portfolio">
+<title>Raj Patel | Aerospace Engineering Portfolio</title>
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <nav>
-    <div class="container nav-inner">
-      <a class="brand" href="#home">RAJ<span>PATEL</span></a>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#portfolio">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
-  </nav>
+<nav><div class="container nav-inner"><a class="brand" href="index.html">RAJ<span>PATEL</span></a>
+<ul class="nav-links"><li><a href="#home">Home</a></li><li><a href="#projects">Projects</a></li><li><a href="#contact">Contact</a></li></ul></div></nav>
+<header class="hero" id="home"><div class="container hero-content">
+<div class="eyebrow">Melbourne, Australia · Open to Aerospace Opportunities</div>
+<h1>Raj <span>Patel</span></h1>
+<div class="hero-role">Aerospace Engineering Postgraduate · UAV Systems · Aircraft Design · Research</div>
+<p>Aerospace engineering postgraduate at RMIT University with project experience in UAV development, aircraft aerodynamics, propulsion, avionics integration, flight performance and engineering research.</p>
+<div class="actions"><a class="btn btn-primary" href="#projects">Explore Projects</a><a class="btn btn-secondary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">LinkedIn</a><a class="btn btn-secondary" href="https://orcid.org/0009-0000-7886-2864" target="_blank">ORCID</a></div>
+</div></header>
+<main>
+<section id="projects"><div class="container">
+<span class="label">Engineering Portfolio</span><h2 class="section-title">Select a project to view the full case study.</h2>
+<p class="section-intro">The homepage now stays clean and recruiter-friendly. Detailed responsibilities, engineering methods, tools, outcomes and galleries open only after a project is selected.</p>
+<div class="project-grid">{''.join(cards)}</div>
+</div></section>
+<section id="contact"><div class="container">
+<span class="label">Contact</span><h2 class="section-title">Open to aerospace engineering opportunities.</h2>
+<div class="actions"><a class="btn btn-primary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">Connect on LinkedIn</a><a class="btn btn-secondary" href="https://github.com/rajpatel-aero" target="_blank">GitHub</a></div>
+</div></section>
+</main>
+<footer><div class="container footer"><p>© <span id="year"></span> Raj Patel.</p><p>Aerospace Engineering Portfolio · Melbourne, Australia</p></div></footer>
+<script src="assets/js/main.js"></script>
+</body></html>"""
+(root / "index.html").write_text(index, encoding="utf-8")
 
-  <header class="hero" id="home">
-    <div class="container hero-content">
-      <div class="availability">Melbourne, Australia · Open to Aerospace Opportunities</div>
-      <h1>Raj <span>Patel</span></h1>
-      <div class="hero-role">Aerospace Engineering Postgraduate · UAV Systems · Aircraft Design · Research</div>
-      <p>
-        Aerospace engineering postgraduate at RMIT University with project experience in UAV development,
-        aircraft aerodynamics, propulsion, avionics integration, flight performance and engineering research.
-      </p>
-      <div class="actions">
-        <a href="#portfolio" class="btn btn-primary">Explore Engineering Portfolio</a>
-        <a href="#contact" class="btn btn-secondary">Contact</a>
-      </div>
-      <div class="socials">
-        <a href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank" rel="noopener">LinkedIn ↗</a>
-        <a href="https://github.com/rajpatel-aero" target="_blank" rel="noopener">GitHub ↗</a>
-        <a href="https://orcid.org/0009-0000-7886-2864" target="_blank" rel="noopener">ORCID ↗</a>
-      </div>
-    </div>
-  </header>
+# project detail pages
+for p in projects:
+    badges = "".join(f'<span class="badge{" confidential" if "Confidential" in b else ""}">{htmlmod.escape(b)}</span>' for b in p["badges"])
+    contributions = "".join(f"<li>{htmlmod.escape(x)}</li>" for x in p["contrib"])
+    tags = "".join(f'<span class="tag">{htmlmod.escape(x)}</span>' for x in p["skills"])
+    gallery = ""
+    valid_gallery = [g for g in p["gallery"] if (img_dir / g).exists()]
+    if valid_gallery:
+        gallery_imgs = "".join(f'<img src="../assets/images/{g}" alt="{htmlmod.escape(p["title"])} project image">' for g in valid_gallery)
+        gallery = f'<div class="gallery">{gallery_imgs}</div>'
+    link_block = ""
+    if p.get("link"):
+        link_block = f'<div class="actions"><a class="btn btn-primary" href="{p["link"]}" target="_blank" rel="noopener">View Publication ↗</a></div>'
+    page = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{htmlmod.escape(p["title"])} | Raj Patel</title><link rel="stylesheet" href="../assets/css/style.css"></head>
+<body>
+<nav><div class="container nav-inner"><a class="brand" href="../index.html">RAJ<span>PATEL</span></a><ul class="nav-links"><li><a href="../index.html">Home</a></li><li><a href="../index.html#projects">Projects</a></li></ul></div></nav>
+<header class="detail-hero"><div class="container"><a class="back-link" href="../index.html#projects">← Back to all projects</a><div class="meta">{badges}</div><h1 class="detail-title">{htmlmod.escape(p["title"])}</h1><p class="section-intro">{htmlmod.escape(p["category"])}</p></div></header>
+<main><section style="padding-top:20px"><div class="container">
+<div class="detail-layout">
+<div class="detail-cover">{img_or_placeholder(p, "../")}</div>
+<div class="detail-panel">
+<h2>Project Overview</h2><p class="detail-copy">{htmlmod.escape(p["summary"])}</p>
+<h2>My Role</h2><p class="detail-copy">{htmlmod.escape(p["role"])}</p>
+<h2>Key Contributions</h2><ul>{contributions}</ul>
+<h2>Skills & Tools</h2><div class="tags">{tags}</div>
+<div class="result">{htmlmod.escape(p["result"])}</div>{link_block}
+</div></div>{gallery}
+</div></section></main>
+<footer><div class="container footer"><p>© <span id="year"></span> Raj Patel.</p><p><a href="../index.html#projects">Return to projects</a></p></div></footer>
+<div class="lightbox" id="lightbox"><button aria-label="Close">×</button><img src="" alt=""></div>
+<script src="../assets/js/main.js"></script></body></html>"""
+    (projects_dir / f"{p['slug']}.html").write_text(page, encoding="utf-8")
 
-  <main>
-    <section id="portfolio">
-      <div class="container">
-        <span class="label">Engineering Portfolio</span>
-        <h2 class="section-title">Selected aerospace design, research and competition projects.</h2>
-        <p class="section-intro">
-          Projects are ordered by relevance to aerospace graduate and early-career roles. Each case study highlights
-          the engineering problem, my responsibilities, methods used and measurable outcomes.
-        </p>
+instructions = """FIXED PROFESSIONAL MULTI-PAGE PORTFOLIO
 
-        <div class="filter-bar">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="uav">UAV & Aircraft</button>
-          <button class="filter-btn" data-filter="aero">Aerodynamics</button>
-          <button class="filter-btn" data-filter="propulsion">Propulsion</button>
-          <button class="filter-btn" data-filter="research">Research</button>
-          <button class="filter-btn" data-filter="competition">Competitions</button>
-        </div>
+WHY THE BUG HAPPENED
+The previous index.html accidentally included Python file-generation code above and below the real HTML.
+This package contains only valid website files.
 
-        <div class="projects">
+UPLOAD STEPS
+1. Download and unzip this package.
+2. In your GitHub repository, delete the current broken index.html.
+3. Upload ALL contents of the extracted folder:
+   - index.html
+   - assets folder
+   - projects folder
+4. Keep the folder structure exactly as supplied.
+5. Commit message:
+   Fix portfolio and add professional project detail pages
+6. Wait 1-3 minutes and refresh the live website with Ctrl+F5.
 
-          <article class="project fade" data-category="uav propulsion">
-            <div class="project-media">
-              <div class="placeholder">
-                <div><strong>Industry Capstone</strong>Approved non-confidential image will be added later.</div>
-              </div>
-            </div>
-            <div class="project-content">
-              <div class="meta">
-                <span class="badge">Featured Capstone</span>
-                <span class="badge confidential">Industry Collaboration · Confidential</span>
-              </div>
-              <h3>Design and Development of a Jet-Propelled Unmanned Aerial System</h3>
-              <p class="project-summary">
-                A multidisciplinary capstone focused on the conceptual design and systems integration of a compact
-                jet-propelled unmanned aerial system. Only a high-level overview is presented because the project was
-                completed with an industry partner under an MoU.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Propulsion-system evaluation and selection.</li>
-                <li>Fuel-system integration studies and mission fuel assessment.</li>
-                <li>Weight estimation, component placement and centre-of-gravity analysis.</li>
-                <li>Servo torque calculations and MATLAB-based engineering analysis.</li>
-                <li>Technical documentation and design justification.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">UAV Design</span><span class="tag">Propulsion</span><span class="tag">Weight & Balance</span>
-                <span class="tag">CG Analysis</span><span class="tag">Flight Stability</span><span class="tag">MATLAB</span>
-                <span class="tag">XFLR5</span>
-              </div>
-              <div class="result">Confidential dimensions, layouts, calculations and proprietary design information are intentionally withheld.</div>
-            </div>
-          </article>
-
-          <article class="project fade" data-category="research uav">
-            <div class="project-media">
-              <div class="placeholder">
-                <div><strong>Published Research</strong>Digital aircraft-maintenance visual will be added later.</div>
-              </div>
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">Published Research</span><span class="badge">Digital Aviation</span></div>
-              <h3>AI-Based Aircraft Fault Detection and Diagnostics</h3>
-              <p class="project-summary">
-                Research examining how artificial intelligence, augmented reality and virtual reality can support
-                aircraft maintenance training and operations through smarter diagnostics, immersive instruction and
-                improved maintenance decision support.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Reviewed AI, AR and VR applications in aircraft maintenance.</li>
-                <li>Analysed maintenance workflows and emerging digital technologies.</li>
-                <li>Developed an innovation proposal for integrated maintenance support.</li>
-                <li>Produced technical research writing and engineering recommendations.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Aircraft Maintenance</span><span class="tag">Artificial Intelligence</span>
-                <span class="tag">AR/VR</span><span class="tag">Human Factors</span><span class="tag">Research</span>
-              </div>
-              <div class="result">
-                <a href="https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations" target="_blank" rel="noopener">
-                  View publication on ResearchGate ↗
-                </a>
-              </div>
-            </div>
-          </article>
-
-          <article class="project fade" data-category="aero">
-            <div class="project-media">
-              <img src="images/project-9-final-wing.png" alt="Final optimized wing design from the Wing Aerodynamic Design project">
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">RMIT University</span><span class="badge">Advanced Aerodynamics</span></div>
-              <h3>Wing Aerodynamic Design</h3>
-              <p class="project-summary">
-                Aerodynamic optimisation of the Bombardier Challenger 3500 wing to improve cruise efficiency,
-                take-off performance and predicted aircraft range. The study combined airfoil optimisation, flap
-                sizing, finite-wing twist optimisation and Breguet range analysis.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Optimised the take-off flap configuration and assessed lift, pitching moment and pressure gradients.</li>
-                <li>Optimised finite-wing twist distribution to reduce induced drag.</li>
-                <li>Compared 2-D airfoil and 3-D finite-wing aerodynamic behaviour.</li>
-                <li>Recalculated aircraft range using the improved aerodynamic coefficients.</li>
-                <li>Prepared technical presentation material and communicated results.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Wing Design</span><span class="tag">Airfoil Optimisation</span><span class="tag">Flap Design</span>
-                <span class="tag">Finite-Wing Theory</span><span class="tag">MATLAB</span><span class="tag">Breguet Range</span>
-              </div>
-              <div class="result">
-                Improved Oswald efficiency from 0.80 to 0.882, increased L/D from 39.9 to 45.15 and predicted approximately 13.5% greater range.
-              </div>
-            </div>
-            <div class="gallery">
-              <img src="images/project-9-airfoil-comparison.png" alt="Baseline and optimized airfoil comparison">
-              <img src="images/project-9-pressure-comparison.png" alt="Pressure distribution comparison">
-              <img src="images/project-9-flap-pressure.png" alt="Optimized flap pressure coefficient distribution">
-              <img src="images/project-9-range-improvement.png" alt="Baseline and optimized range comparison">
-            </div>
-          </article>
-
-          <article class="project fade" data-category="research aero">
-            <div class="project-media">
-              <div class="placeholder">
-                <div><strong>Published Canard Research</strong>XFLR5 result image will be added later.</div>
-              </div>
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">Published Research</span><span class="badge">Aircraft Stability</span></div>
-              <h3>Effect of Vertical location canard with three different locations to make Airplane Eco friendly</h3>
-              <p class="project-summary">
-                Published aerodynamic study comparing three canard locations and evaluating their effect on aircraft
-                lift, drag, stability and efficiency using XFLR5-based analysis.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Supported aircraft configuration and canard-position modelling.</li>
-                <li>Performed aerodynamic and stability analysis using XFLR5.</li>
-                <li>Compared lift, drag and efficiency across three configurations.</li>
-                <li>Evaluated winglet and vertical-tail effects.</li>
-                <li>Co-authored and documented the published research.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Canard Aircraft</span><span class="tag">XFLR5</span><span class="tag">Stability</span>
-                <span class="tag">Lift & Drag</span><span class="tag">Winglets</span><span class="tag">Research Writing</span>
-              </div>
-              <div class="result">The study identified the intermediate canard location as the preferred configuration among those analysed.</div>
-            </div>
-          </article>
-
-          <article class="project fade" data-category="propulsion">
-            <div class="project-media">
-              <div class="placeholder">
-                <div><strong>High-Speed Propulsion</strong>Scramjet cavity visual will be added later.</div>
-              </div>
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">Academic Project</span><span class="badge">Scramjet Propulsion</span></div>
-              <h3>Supersonic Combustion with cavity-based Fuel Injection</h3>
-              <p class="project-summary">
-                Design-focused investigation of a scramjet engine using cavity-based fuel injection to support stable
-                combustion under supersonic flow conditions and explore improved fuel-air mixing and propulsion efficiency.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Developed the conceptual scramjet and cavity-based injection arrangement.</li>
-                <li>Studied combustion stability and fuel-air mixing at supersonic speeds.</li>
-                <li>Evaluated methods for improving efficiency and reducing fuel consumption.</li>
-                <li>Connected high-speed propulsion concepts with sustainable aviation objectives.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Scramjet</span><span class="tag">Supersonic Combustion</span><span class="tag">Fuel Injection</span>
-                <span class="tag">High-Speed Aerodynamics</span><span class="tag">Sustainable Propulsion</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="project fade" data-category="aero propulsion research">
-            <div class="project-media">
-              <div class="placeholder">
-                <div><strong>Experimental Aerodynamics</strong>Nozzle or CFD contour will be added later.</div>
-              </div>
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">Major Research Project</span><span class="badge">CFD</span></div>
-              <h3>Decay Characteristics of Sonic Jets</h3>
-              <p class="project-summary">
-                Investigation of sonic jets issuing from circular and non-circular converging nozzles, focusing on
-                velocity decay, pressure behaviour, mixing and potential-core characteristics.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Designed circular and non-circular nozzle geometries.</li>
-                <li>Developed computational meshes and compressible-flow simulations.</li>
-                <li>Analysed pressure, velocity, Mach number and jet-decay behaviour.</li>
-                <li>Compared aerodynamic performance across multiple nozzle configurations.</li>
-                <li>Interpreted results and prepared the engineering report.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">ANSYS CFX</span><span class="tag">ICEM CFD</span><span class="tag">Compressible Flow</span>
-                <span class="tag">Nozzle Design</span><span class="tag">Jet Propulsion</span><span class="tag">Data Analysis</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="project fade" data-category="competition uav">
-            <div class="project-media">
-              <img src="images/project-6-aircraft-lakeland.png" alt="Team Lakshya Regular Class aircraft at Lakeland, Florida">
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">International Competition</span><span class="badge">Regular Class RC Aircraft</span></div>
-              <h3>SAE International AERO DESIGN EAST 2023 Competition</h3>
-              <p class="project-summary">
-                Participated with Team IARE Lakshya in the international SAE Aero Design East 2023 competition in
-                Lakeland, Florida, contributing to the development of a payload-focused Regular Class RC aircraft.
-              </p>
-              <div class="subheading">Role · Avionics Lead</div>
-              <ul class="contributions">
-                <li>Led avionics-system selection and supported onboard electronic integration.</li>
-                <li>Performed component trade-off studies against competition constraints.</li>
-                <li>Contributed to technical documentation and design-report preparation.</li>
-                <li>Supported performance evaluation, prototype testing and design validation.</li>
-                <li>Collaborated with aerodynamic, structural, fabrication and testing teams.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Avionics Integration</span><span class="tag">RC Aircraft</span><span class="tag">Systems Engineering</span>
-                <span class="tag">Trade Studies</span><span class="tag">XFLR5</span><span class="tag">MATLAB</span><span class="tag">ANSYS</span>
-              </div>
-              <div class="result">Practical experience across conceptual design, system integration, prototype development and international competition delivery.</div>
-            </div>
-            <div class="gallery">
-              <img src="images/project-6-aircraft-with-raj.jpg" alt="Raj Patel standing with the Regular Class aircraft">
-              <img src="images/project-6-lakeland-closeup.jpg" alt="Competition aircraft close-up in Lakeland">
-              <img src="images/project-6-avionics-profile.jpg" alt="Avionics Lead profile card">
-              <img src="images/project-6-aircraft-lakeland.png" alt="Aircraft at the competition venue">
-            </div>
-          </article>
-
-          <article class="project fade" data-category="competition uav">
-            <div class="project-media">
-              <img src="images/project-7-team.png" alt="Team IARE Lakshya at SAE AeroThon 2022">
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">National Competition</span><span class="badge">Autonomous Multirotor UAV</span></div>
-              <h3>SAE India AEROTHON COMPETITION</h3>
-              <p class="project-summary">
-                Contributed to Team IARE Lakshya's design of an autonomous multirotor UAV for target identification
-                and precision payload delivery under SAE AeroThon 2022 competition requirements.
-              </p>
-              <div class="subheading">Role · Avionics Technician</div>
-              <ul class="contributions">
-                <li>Supported selection of the flight controller, GPS, telemetry, cameras and companion computer.</li>
-                <li>Conducted trade-off analysis for avionics and communication subsystems.</li>
-                <li>Assisted with material evaluation and system-performance assessment.</li>
-                <li>Supported reliable autonomous-flight and payload-delivery architecture.</li>
-                <li>Contributed to technical documentation and multidisciplinary design reviews.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">UAV Avionics</span><span class="tag">Pixhawk Cube Orange</span><span class="tag">Raspberry Pi</span>
-                <span class="tag">GPS</span><span class="tag">Telemetry</span><span class="tag">Autonomous Flight</span>
-              </div>
-              <div class="result">Developed practical understanding of autonomous UAV architecture, subsystem selection and competition-driven systems engineering.</div>
-            </div>
-            <div class="gallery">
-              <img src="images/project-7-cad.png" alt="Optimized UAV CAD design">
-              <img src="images/project-7-team.png" alt="Team at SAE AeroThon 2022">
-            </div>
-          </article>
-
-          <article class="project fade" data-category="uav">
-            <div class="project-media">
-              <img src="images/project-8-flight-test.jpg" alt="Raj Patel inspecting an RC aircraft during flight testing">
-            </div>
-            <div class="project-content">
-              <div class="meta"><span class="badge">Foundational Project</span><span class="badge">Hands-on Aeromodelling</span></div>
-              <h3>RC Plane Modelling and Flight Test</h3>
-              <p class="project-summary">
-                My first hands-on fixed-wing aeromodelling project, covering the design, fabrication, assembly,
-                trimming and flight testing of an electrically powered RC aircraft during my Bachelor's degree.
-              </p>
-              <div class="subheading">My contribution</div>
-              <ul class="contributions">
-                <li>Fabricated and assembled the lightweight aircraft structure.</li>
-                <li>Installed propulsion, receiver and control-surface systems.</li>
-                <li>Balanced the centre of gravity and completed pre-flight inspections.</li>
-                <li>Troubleshot structural and control issues through iterative modification.</li>
-                <li>Participated in flight testing and handling evaluation.</li>
-              </ul>
-              <div class="tags">
-                <span class="tag">Aeromodelling</span><span class="tag">Aircraft Assembly</span><span class="tag">Flight Testing</span>
-                <span class="tag">CG Balancing</span><span class="tag">Electric Propulsion</span><span class="tag">Troubleshooting</span>
-              </div>
-              <div class="result">The successful project helped build the practical foundation that led to later participation in university aerospace design teams and competitions.</div>
-            </div>
-            <div class="gallery">
-              <img src="images/project-8-completed-aircraft.png" alt="Completed RC aircraft">
-              <img src="images/project-8-building.png" alt="RC aircraft fabrication and assembly">
-              <img src="images/project-8-flight-test.jpg" alt="Aircraft inspection during testing">
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <section id="contact">
-      <div class="container">
-        <div class="contact-card fade">
-          <span class="label">Contact</span>
-          <h2 class="section-title">Open to aerospace engineering opportunities.</h2>
-          <p>
-            I am interested in graduate, internship and early-career opportunities involving aircraft design,
-            UAV development, aerodynamic analysis, propulsion, flight performance and aviation technology.
-          </p>
-          <div class="actions" style="justify-content:center;margin-bottom:0">
-            <a class="btn btn-primary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank" rel="noopener">Connect on LinkedIn</a>
-            <a class="btn btn-secondary" href="https://orcid.org/0009-0000-7886-2864" target="_blank" rel="noopener">View ORCID</a>
-            <a class="btn btn-secondary" href="https://github.com/rajpatel-aero" target="_blank" rel="noopener">View GitHub</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer">
-      <p>© <span id="year"></span> Raj Patel. All rights reserved.</p>
-      <p>Aerospace Engineering Portfolio · Melbourne, Australia</p>
-    </div>
-  </footer>
-
-  <div class="lightbox" id="lightbox">
-    <button aria-label="Close image">×</button>
-    <img src="" alt="">
-  </div>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll(".fade").forEach(el => observer.observe(el));
-
-    const filters = document.querySelectorAll(".filter-btn");
-    const projects = document.querySelectorAll(".project");
-
-    filters.forEach(btn => {
-      btn.addEventListener("click", () => {
-        filters.forEach(item => item.classList.remove("active"));
-        btn.classList.add("active");
-
-        const value = btn.dataset.filter;
-        projects.forEach(project => {
-          const categories = project.dataset.category || "";
-          project.style.display = value === "all" || categories.includes(value) ? "grid" : "none";
-        });
-      });
-    });
-
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImage = lightbox.querySelector("img");
-
-    document.querySelectorAll(".gallery img").forEach(img => {
-      img.addEventListener("click", () => {
-        lightboxImage.src = img.src;
-        lightboxImage.alt = img.alt;
-        lightbox.classList.add("open");
-      });
-    });
-
-    lightbox.addEventListener("click", event => {
-      if (event.target === lightbox || event.target.tagName === "BUTTON") {
-        lightbox.classList.remove("open");
-      }
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") lightbox.classList.remove("open");
-    });
-  </script>
-</body>
-</html>
-'''
-
-(base / "index.html").write_text(html, encoding="utf-8")
-
-readme = """RAJ PATEL PORTFOLIO - UPLOAD INSTRUCTIONS
-
-1. Open your GitHub repository:
-   rajpatel-aero/rajpatel-aero.github.io
-
-2. Upload index.html to the ROOT of the repository.
-   Replace the current index.html when GitHub asks.
-
-3. Upload the complete images folder to the ROOT.
-   The structure must look exactly like:
-
-   rajpatel-aero.github.io/
-   ├── index.html
-   └── images/
-       ├── project-6-aircraft-lakeland.png
-       ├── project-7-team.png
-       └── ...
-
-4. Commit message:
-   Upgrade aerospace portfolio with complete project section
-
-5. Wait 1-3 minutes and refresh:
-   https://rajpatel-aero.github.io
-
-IMPORTANT:
-- Do not rename the image files unless you also change their paths in index.html.
-- Projects 1, 2, 4, 5 and 6 currently use professional placeholders until approved images are added.
-- The Project 1 capstone intentionally excludes confidential details.
+The homepage now shows clean project cards.
+Clicking “View Project” opens a dedicated project case-study page.
 """
-(base / "UPLOAD-INSTRUCTIONS.txt").write_text(readme, encoding="utf-8")
+(root / "UPLOAD-INSTRUCTIONS.txt").write_text(instructions, encoding="utf-8")
 
-zip_path = Path("/mnt/data/rajpatel-portfolio-github.zip")
+zip_path = Path("/mnt/data/rajpatel-portfolio-v2-fixed.zip")
 with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    for path in base.rglob("*"):
-        if path.is_file():
-            z.write(path, path.relative_to(base.parent))
-
-print(f"Created: {zip_path}")
-print(f"Files: {sum(1 for p in base.rglob('*') if p.is_file())}")
+    for p in root.rglob("*"):
+        if p.is_file():
+            z.write(p, p.relative_to(root))
+print(zip_path)
