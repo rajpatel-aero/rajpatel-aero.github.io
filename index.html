@@ -1,282 +1,520 @@
-html = """<!DOCTYPE html>
+from pathlib import Path
+import shutil, zipfile, html
+
+root = Path("/mnt/data/rajpatel-github-portfolio-clean")
+img_dir = root / "images"
+root.mkdir(exist_ok=True)
+img_dir.mkdir(exist_ok=True)
+
+# Copy available user-provided images for projects 6, 7, 8 and rendered report images for project 9.
+image_sources = {
+    "/mnt/data/1d7ab879-1ff0-4105-9e29-feb5a95f2824.jpeg": "project-6-aircraft-with-raj.jpg",
+    "/mnt/data/fde02174-f054-4e5a-89b1-61bec8d22d8e.jpeg": "project-6-avionics-profile.jpg",
+    "/mnt/data/03e4e534-b16e-4776-b0cb-90485815a388.jpeg": "project-6-lakeland-closeup.jpg",
+    "/mnt/data/57dc4ea4-7669-44ab-9d9b-dddeb147b272.png": "project-6-aircraft-lakeland.png",
+    "/mnt/data/6f5e1e0d-324b-4627-b763-5d39ce4963f5.png": "project-7-cad.png",
+    "/mnt/data/4cff775f-78f4-4e2c-8827-f8ada5b613fb.png": "project-7-team.png",
+    "/mnt/data/fd68194a-4688-482f-b589-1ddcfb73179e.png": "project-8-completed-aircraft.png",
+    "/mnt/data/4a5c551b-1bb4-414f-bbb5-f24e890b85ab.png": "project-8-building.png",
+    "/mnt/data/3176a34b-75ab-43e1-97ae-688028f4ed9a.jpeg": "project-8-flight-test.jpg",
+    "/mnt/data/_wing_renders/page-29.png": "project-9-final-wing.png",
+    "/mnt/data/_wing_renders/page-10.png": "project-9-airfoil-comparison.png",
+    "/mnt/data/_wing_renders/page-11.png": "project-9-pressure-comparison.png",
+    "/mnt/data/_wing_renders/page-20.png": "project-9-flap-pressure.png",
+    "/mnt/data/_wing_renders/page-32.png": "project-9-range-improvement.png",
+}
+for src, dst in image_sources.items():
+    p = Path(src)
+    if p.exists():
+        shutil.copy2(p, img_dir / dst)
+
+projects = [
+    {
+        "title": "Design and Development of a Jet-Propelled Unmanned Aerial System",
+        "type": "Featured Capstone · Confidential",
+        "summary": "Conceptual design and systems-integration study for a compact jet-propelled unmanned aerial system completed with an industry partner under an MoU.",
+        "role": "Propulsion and systems-integration contributor",
+        "contrib": [
+            "Propulsion-system evaluation and selection",
+            "Fuel-system integration and mission fuel assessment",
+            "Weight estimation, component placement and centre-of-gravity analysis",
+            "Servo torque calculations and MATLAB-based analysis",
+            "Technical documentation and design justification"
+        ],
+        "skills": ["UAV Design", "Propulsion", "Weight & Balance", "CG Analysis", "Flight Stability", "MATLAB", "XFLR5"],
+        "result": "Only a high-level overview is shown. Confidential dimensions, layouts, calculations and proprietary information are not disclosed.",
+        "image": None
+    },
+    {
+        "title": "AI-Based Aircraft Fault Detection and Diagnostics",
+        "type": "Published Research · Digital Aviation",
+        "summary": "Research examining how AI, AR and VR can support aircraft maintenance training and operations through smarter diagnostics, immersive instruction and improved decision support.",
+        "role": "Researcher and co-author",
+        "contrib": [
+            "Reviewed AI, AR and VR applications in aircraft maintenance",
+            "Analysed maintenance workflows and emerging digital technologies",
+            "Developed an innovation proposal for integrated maintenance support",
+            "Produced technical research writing and engineering recommendations"
+        ],
+        "skills": ["Aircraft Maintenance", "Artificial Intelligence", "AR/VR", "Human Factors", "Research Writing"],
+        "result": "Published research available through ResearchGate.",
+        "link": "https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations",
+        "image": None
+    },
+    {
+        "title": "Wing Aerodynamic Design",
+        "type": "RMIT University · Advanced Aerodynamics",
+        "summary": "Aerodynamic optimisation of the Bombardier Challenger 3500 wing to improve cruise efficiency, take-off performance and predicted aircraft range.",
+        "role": "Responsible for flap optimisation, finite-wing design and range recalculation",
+        "contrib": [
+            "Optimised the take-off flap configuration",
+            "Optimised finite-wing twist distribution to reduce induced drag",
+            "Compared 2-D airfoil and 3-D finite-wing aerodynamic behaviour",
+            "Recalculated aircraft range using improved aerodynamic coefficients",
+            "Prepared technical presentation material"
+        ],
+        "skills": ["Wing Design", "Airfoil Optimisation", "Flap Design", "Finite-Wing Theory", "MATLAB", "Breguet Range"],
+        "result": "Improved Oswald efficiency from 0.80 to 0.882, increased L/D from 39.9 to 45.15 and predicted approximately 13.5% greater range.",
+        "image": "project-9-final-wing.png"
+    },
+    {
+        "title": "Effect of Vertical location canard with three different locations to make Airplane Eco friendly",
+        "type": "Published Research · Aircraft Stability",
+        "summary": "Published study comparing three vertical canard locations and evaluating their effect on aircraft lift, drag, stability and efficiency.",
+        "role": "Research contributor and co-author",
+        "contrib": [
+            "Supported aircraft configuration and canard-position modelling",
+            "Performed aerodynamic and stability analysis using XFLR5",
+            "Compared lift, drag and efficiency across three configurations",
+            "Evaluated winglet and vertical-tail effects",
+            "Co-authored the published research"
+        ],
+        "skills": ["Canard Aircraft", "XFLR5", "Stability", "Lift & Drag", "Winglets", "Research Writing"],
+        "result": "The intermediate canard location was identified as the preferred arrangement among the configurations analysed.",
+        "image": None
+    },
+    {
+        "title": "Supersonic Combustion with cavity-based Fuel Injection",
+        "type": "Academic Project · Scramjet Propulsion",
+        "summary": "Design-focused investigation of a scramjet engine using cavity-based fuel injection to support stable combustion under supersonic flow conditions.",
+        "role": "Design and research contributor",
+        "contrib": [
+            "Developed the conceptual scramjet and cavity-based injection arrangement",
+            "Studied combustion stability and fuel-air mixing",
+            "Evaluated approaches for improving efficiency and reducing fuel consumption",
+            "Connected propulsion concepts with sustainable aviation objectives"
+        ],
+        "skills": ["Scramjet", "Supersonic Combustion", "Fuel Injection", "High-Speed Aerodynamics", "Sustainable Propulsion"],
+        "result": "Developed practical understanding of high-speed combustion and propulsion design.",
+        "image": None
+    },
+    {
+        "title": "Decay Characteristics of Sonic Jets",
+        "type": "Major Research Project · CFD",
+        "summary": "Investigation of sonic jets issuing from circular and non-circular converging nozzles, focusing on velocity decay, pressure behaviour, mixing and potential-core characteristics.",
+        "role": "CFD and aerodynamic analysis contributor",
+        "contrib": [
+            "Designed circular and non-circular nozzle geometries",
+            "Developed computational meshes and compressible-flow simulations",
+            "Analysed pressure, velocity, Mach number and jet-decay behaviour",
+            "Compared multiple nozzle configurations",
+            "Prepared the engineering report"
+        ],
+        "skills": ["ANSYS CFX", "ICEM CFD", "Compressible Flow", "Nozzle Design", "Jet Propulsion", "Data Analysis"],
+        "result": "Compared six nozzle configurations to understand how geometry influences sonic-jet decay and mixing.",
+        "image": None
+    },
+    {
+        "title": "SAE International AERO DESIGN EAST 2023 Competition",
+        "type": "International Competition · Regular Class RC Aircraft",
+        "summary": "Participated with Team IARE Lakshya in SAE Aero Design East 2023 in Lakeland, Florida, contributing to a payload-focused Regular Class RC aircraft.",
+        "role": "Avionics Lead",
+        "contrib": [
+            "Led avionics-system selection and integration",
+            "Performed component trade-off studies",
+            "Contributed to technical documentation and design-report preparation",
+            "Supported performance evaluation, prototype testing and validation",
+            "Collaborated with aerodynamic, structural, fabrication and testing teams"
+        ],
+        "skills": ["Avionics Integration", "RC Aircraft", "Systems Engineering", "Trade Studies", "XFLR5", "MATLAB", "ANSYS"],
+        "result": "Practical experience across conceptual design, systems integration, prototype development and international competition delivery.",
+        "image": "project-6-aircraft-lakeland.png"
+    },
+    {
+        "title": "SAE India AEROTHON COMPETITION",
+        "type": "National Competition · Autonomous Multirotor UAV",
+        "summary": "Contributed to Team IARE Lakshya's autonomous multirotor UAV for target identification and precision payload delivery.",
+        "role": "Avionics Technician",
+        "contrib": [
+            "Supported selection of flight controller, GPS, telemetry, cameras and companion computer",
+            "Conducted avionics and communication trade-off analysis",
+            "Assisted with material evaluation and system-performance assessment",
+            "Supported autonomous-flight and payload-delivery architecture",
+            "Contributed to technical documentation"
+        ],
+        "skills": ["UAV Avionics", "Pixhawk Cube Orange", "Raspberry Pi", "GPS", "Telemetry", "Autonomous Flight"],
+        "result": "Developed practical understanding of autonomous UAV architecture and subsystem selection.",
+        "image": "project-7-team.png"
+    },
+    {
+        "title": "RC Plane Modelling and Flight Test",
+        "type": "Foundational Project · Hands-on Aeromodelling",
+        "summary": "My first hands-on fixed-wing aeromodelling project covering design, fabrication, assembly, trimming and flight testing.",
+        "role": "Design, fabrication and flight-test contributor",
+        "contrib": [
+            "Fabricated and assembled the aircraft structure",
+            "Installed propulsion and control systems",
+            "Balanced the centre of gravity",
+            "Troubleshot structural and control issues",
+            "Participated in flight testing"
+        ],
+        "skills": ["Aeromodelling", "Aircraft Assembly", "Flight Testing", "CG Balancing", "Electric Propulsion", "Troubleshooting"],
+        "result": "The project built the practical foundation that led to later aerospace design teams and competitions.",
+        "image": "project-8-flight-test.jpg"
+    }
+]
+
+cards_html = []
+modal_data = []
+for i, p in enumerate(projects):
+    if p["image"] and (img_dir / p["image"]).exists():
+        media = f'<img src="images/{p["image"]}" alt="{html.escape(p["title"])}">'
+    else:
+        media = f'<div class="project-placeholder">{html.escape(p["type"].split("·")[0].strip())}</div>'
+    cards_html.append(f"""
+      <article class="project-card">
+        <div class="project-media">{media}</div>
+        <div class="project-body">
+          <span class="project-type">{html.escape(p["type"])}</span>
+          <h3>{html.escape(p["title"])}</h3>
+          <p>{html.escape(p["summary"])}</p>
+          <button class="project-link" onclick="openProject({i})">View Project →</button>
+        </div>
+      </article>
+    """)
+    modal_data.append(p)
+
+import json
+project_json = json.dumps(modal_data, ensure_ascii=False)
+
+index_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Raj Patel Aerospace Engineering Portfolio" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Raj Patel Aerospace Engineering Portfolio">
   <title>Raj Patel | Aerospace Engineering Portfolio</title>
   <style>
-    :root{
-      --bg:#050a13;--panel:#0d1c31;--panel2:#102742;--line:rgba(127,188,255,.18);
-      --primary:#65b5ff;--primary2:#a8d8ff;--text:#f5f8fc;--muted:#a7b7ca;
-      --success:#6ee7b7;--warning:#fbbf24;--max:1180px;--radius:22px;
-      --shadow:0 24px 70px rgba(0,0,0,.35)
-    }
-    *{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}
-    body{
+    :root {{
+      --bg:#06101e; --bg2:#0b1b32; --panel:rgba(14,34,61,.82);
+      --line:rgba(120,190,255,.22); --primary:#5bb5ff; --primary2:#9bd6ff;
+      --text:#f5f8fc; --muted:#a9b9cb; --success:#72e6b6; --max:1180px;
+      --radius:20px; --shadow:0 22px 60px rgba(0,0,0,.34);
+    }}
+    *{{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}}
+    body{{
       font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
+      color:var(--text);line-height:1.7;overflow-x:hidden;
       background:
-        radial-gradient(circle at 15% 4%,rgba(51,139,230,.18),transparent 28rem),
-        radial-gradient(circle at 90% 13%,rgba(51,139,230,.1),transparent 24rem),
-        var(--bg);
-      line-height:1.7
-    }
-    a{color:inherit;text-decoration:none}
-    .container{width:min(92%,var(--max));margin:auto}
-    nav{
-      position:sticky;top:0;z-index:1000;background:rgba(5,10,19,.88);
-      border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)
-    }
-    .nav-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{font-weight:900;letter-spacing:.08em}.brand span{color:var(--primary)}
-    .nav-links{display:flex;gap:24px;list-style:none;color:var(--muted);font-size:.92rem;font-weight:700}
-    .nav-links a:hover{color:var(--text)}
-    .hero{padding:115px 0 80px;min-height:78vh;display:flex;align-items:center}
-    .hero-content{max-width:900px}
-    .eyebrow{
-      display:inline-flex;padding:8px 14px;border:1px solid rgba(101,181,255,.25);
-      border-radius:999px;background:rgba(101,181,255,.08);color:var(--primary2);
-      font-weight:800;font-size:.86rem;margin-bottom:24px
-    }
-    h1{font-size:clamp(3.5rem,10vw,7.2rem);line-height:.94;letter-spacing:-.06em;margin-bottom:20px}
-    h1 span{color:var(--primary)}
-    .hero-role{font-size:clamp(1.15rem,2.8vw,1.62rem);font-weight:700;color:#dbeafe;margin-bottom:18px}
-    .hero p,.section-intro,.project-card p,.modal-copy{color:var(--muted)}
-    .actions{display:flex;gap:13px;flex-wrap:wrap;margin-top:30px}
-    .btn{
-      min-height:50px;padding:0 22px;border-radius:12px;display:inline-flex;align-items:center;
-      justify-content:center;font-weight:850;border:1px solid transparent;transition:.25s;cursor:pointer
-    }
-    .btn:hover{transform:translateY(-3px)}
-    .btn-primary{color:#03101d;background:linear-gradient(135deg,var(--primary2),var(--primary));box-shadow:0 15px 38px rgba(101,181,255,.2)}
-    .btn-secondary{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
-    section{padding:92px 0}
-    .label{display:inline-block;color:var(--primary2);font-weight:850;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem;margin-bottom:10px}
-    .section-title{font-size:clamp(2rem,5vw,3.3rem);line-height:1.14;max-width:850px;margin-bottom:16px}
-    .section-intro{max-width:780px;margin-bottom:38px}
-    .project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-    .project-card{
-      background:linear-gradient(145deg,rgba(13,28,49,.94),rgba(7,18,33,.98));
-      border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-      box-shadow:var(--shadow);transition:.3s
-    }
-    .project-card:hover{transform:translateY(-7px);border-color:rgba(101,181,255,.5)}
-    .card-top{
-      height:160px;display:grid;place-items:center;text-align:center;padding:24px;
-      background:radial-gradient(circle at 45% 32%,rgba(101,181,255,.3),transparent 40%),
-      linear-gradient(145deg,#153252,#07111f);color:#d8ecff;font-weight:850
-    }
-    .card-body{padding:24px}
-    .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-    .badge{font-size:.72rem;font-weight:850;padding:5px 9px;border-radius:999px;border:1px solid rgba(101,181,255,.25);background:rgba(101,181,255,.09);color:#cfeaff}
-    .badge.confidential{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);color:#ffe2a0}
-    .project-card h3{font-size:1.2rem;line-height:1.3;margin-bottom:10px}
-    .view-btn{margin-top:18px;color:var(--primary2);font-weight:850;background:none;border:0;cursor:pointer}
-    footer{padding:30px 0;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.88rem}
-    .footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-    .modal{
-      position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.78);
-      display:none;align-items:center;justify-content:center;padding:24px
-    }
-    .modal.open{display:flex}
-    .modal-card{
-      width:min(94vw,900px);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#0d1c31,#07111f);
-      border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:32px;position:relative
-    }
-    .close{position:absolute;right:18px;top:12px;border:0;background:none;color:#fff;font-size:2rem;cursor:pointer}
-    .modal-title{font-size:clamp(1.8rem,4vw,3rem);line-height:1.15;margin:12px 40px 16px 0}
-    .modal-card h3{margin:22px 0 8px}
-    .modal-card ul{padding-left:20px;color:var(--muted)}
-    .modal-card li{margin-bottom:7px}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .tag{font-size:.76rem;font-weight:750;padding:6px 10px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.04);color:#dceeff}
-    .result{margin-top:22px;padding:15px 17px;border-left:3px solid var(--success);background:rgba(110,231,183,.07);border-radius:0 12px 12px 0;color:#dcfff1}
-    @media(max-width:950px){.project-grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:650px){.nav-links{display:none}.hero{min-height:auto}.project-grid{grid-template-columns:1fr}.actions{flex-direction:column}.btn{width:100%}}
+      radial-gradient(circle at 15% 8%,rgba(44,134,230,.24),transparent 30rem),
+      radial-gradient(circle at 85% 10%,rgba(44,134,230,.16),transparent 28rem),
+      linear-gradient(180deg,#0a1830 0%,var(--bg) 45%,#040912 100%);
+    }}
+    a{{color:inherit;text-decoration:none}}
+    img{{width:100%;display:block}}
+    .container{{width:min(92%,var(--max));margin:auto}}
+    nav{{
+      position:fixed;top:0;left:0;width:100%;z-index:1000;
+      background:rgba(5,11,21,.88);border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(16px)
+    }}
+    .nav-inner{{min-height:74px;display:flex;align-items:center;justify-content:space-between}}
+    .logo{{font-weight:900;letter-spacing:.08em}} .logo span{{color:var(--primary)}}
+    .nav-links{{display:flex;list-style:none;gap:28px;color:var(--muted);font-weight:700;font-size:.92rem}}
+    .nav-links a:hover{{color:#fff}}
+    .hero{{min-height:100vh;display:flex;align-items:center;padding:130px 0 90px}}
+    .hero-content{{max-width:920px}}
+    .eyebrow{{
+      display:inline-flex;padding:8px 14px;border:1px solid rgba(91,181,255,.28);
+      border-radius:999px;background:rgba(91,181,255,.09);color:var(--primary2);
+      font-weight:800;font-size:.86rem;margin-bottom:25px
+    }}
+    .hero h1{{font-size:clamp(3.8rem,10vw,7.8rem);line-height:.93;letter-spacing:-.065em;margin-bottom:22px}}
+    .hero h1 span{{color:var(--primary)}}
+    .hero-role{{font-size:clamp(1.15rem,3vw,1.65rem);font-weight:750;color:#e0efff;margin-bottom:19px}}
+    .hero-description{{max-width:780px;color:var(--muted);font-size:1.08rem;margin-bottom:32px}}
+    .buttons,.socials{{display:flex;gap:13px;flex-wrap:wrap}}
+    .buttons{{margin-bottom:32px}}
+    .btn{{
+      min-height:50px;padding:0 22px;border-radius:12px;display:inline-flex;
+      align-items:center;justify-content:center;font-weight:850;border:1px solid transparent;transition:.25s
+    }}
+    .btn:hover{{transform:translateY(-3px)}}
+    .btn-primary{{color:#04111e;background:linear-gradient(135deg,var(--primary2),var(--primary));box-shadow:0 15px 35px rgba(91,181,255,.2)}}
+    .btn-secondary{{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.15)}}
+    .socials{{color:var(--muted);font-size:.93rem;font-weight:700}}
+    .stats{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:-58px;position:relative;z-index:4}}
+    .stat{{padding:25px;border-radius:18px;background:rgba(18,46,82,.66);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(12px)}}
+    .stat strong{{display:block;color:var(--primary2);font-size:1.9rem;margin-bottom:3px}}
+    .stat span{{color:var(--muted);font-size:.88rem}}
+    section{{padding:96px 0}}
+    .label{{display:inline-block;color:var(--primary2);font-size:.78rem;font-weight:850;letter-spacing:.17em;text-transform:uppercase;margin-bottom:10px}}
+    .section-title{{font-size:clamp(2.1rem,5vw,3.3rem);line-height:1.14;margin-bottom:16px;max-width:850px}}
+    .section-intro{{max-width:760px;color:var(--muted);margin-bottom:40px}}
+    .about-grid{{display:grid;grid-template-columns:1.15fr .85fr;gap:45px}}
+    .about-copy p{{color:var(--muted);margin-bottom:17px}}
+    .about-card{{padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}}
+    .about-card h3{{margin-bottom:18px}}
+    .detail{{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08)}}
+    .detail:last-child{{border-bottom:0}}
+    .detail small{{display:block;color:var(--primary2);text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:3px}}
+    .expertise-grid{{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}}
+    .expertise-card{{padding:25px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}}
+    .expertise-card h3{{margin-bottom:9px}} .expertise-card p{{color:var(--muted);font-size:.94rem}}
+    .projects-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}}
+    .project-card{{
+      overflow:hidden;background:linear-gradient(145deg,rgba(13,31,55,.94),rgba(6,15,29,.98));
+      border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:.3s
+    }}
+    .project-card:hover{{transform:translateY(-7px);border-color:rgba(91,181,255,.52)}}
+    .project-media{{height:210px;background:linear-gradient(145deg,#17375d,#081323);overflow:hidden}}
+    .project-media img{{height:100%;object-fit:cover;transition:.5s}}
+    .project-card:hover img{{transform:scale(1.04)}}
+    .project-placeholder{{height:100%;display:grid;place-items:center;text-align:center;padding:25px;color:#d9ecff;font-weight:850;background:radial-gradient(circle at 45% 30%,rgba(91,181,255,.28),transparent 42%)}}
+    .project-body{{padding:23px}}
+    .project-type{{display:block;color:var(--primary2);font-size:.73rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;margin-bottom:11px}}
+    .project-body h3{{font-size:1.2rem;line-height:1.3;margin-bottom:9px}}
+    .project-body p{{color:var(--muted);font-size:.91rem}}
+    .project-link{{margin-top:16px;background:none;border:0;color:var(--primary2);font-weight:850;cursor:pointer}}
+    .research-card,.contact-card{{padding:40px;background:linear-gradient(135deg,rgba(23,62,104,.86),rgba(8,19,35,.98));border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}}
+    .research-card p,.contact-card p{{color:var(--muted);max-width:760px}}
+    .contact-card{{text-align:center}} .contact-card .buttons{{justify-content:center;margin-top:28px;margin-bottom:0}}
+    footer{{padding:30px 0;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.88rem}}
+    .footer{{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}}
+    .modal{{
+      position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.82);
+      display:none;align-items:center;justify-content:center;padding:22px
+    }}
+    .modal.open{{display:flex}}
+    .modal-card{{
+      width:min(94vw,900px);max-height:90vh;overflow:auto;
+      background:linear-gradient(145deg,#0e2038,#07111f);
+      border:1px solid var(--line);border-radius:24px;padding:32px;box-shadow:var(--shadow);position:relative
+    }}
+    .modal-close{{position:absolute;right:18px;top:12px;border:0;background:none;color:#fff;font-size:2rem;cursor:pointer}}
+    .modal-title{{font-size:clamp(1.8rem,4vw,3rem);line-height:1.15;margin:8px 40px 15px 0}}
+    .modal-card h3{{margin:21px 0 8px}}
+    .modal-card p,.modal-card ul{{color:var(--muted)}}
+    .modal-card ul{{padding-left:20px}}
+    .modal-card li{{margin-bottom:6px}}
+    .tags{{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}}
+    .tag{{font-size:.76rem;font-weight:750;padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);color:#dceeff}}
+    .result{{margin-top:20px;padding:14px 16px;border-left:3px solid var(--success);background:rgba(114,230,182,.07);border-radius:0 12px 12px 0;color:#dcfff1}}
+    @media(max-width:950px){{
+      .stats{{grid-template-columns:repeat(2,1fr)}} .about-grid{{grid-template-columns:1fr}}
+      .expertise-grid{{grid-template-columns:repeat(2,1fr)}} .projects-grid{{grid-template-columns:repeat(2,1fr)}}
+    }}
+    @media(max-width:650px){{
+      .nav-links{{display:none}} .stats{{grid-template-columns:1fr;margin-top:-25px}}
+      .expertise-grid,.projects-grid{{grid-template-columns:1fr}}
+      .buttons,.socials{{flex-direction:column}} .btn{{width:100%}}
+    }}
   </style>
 </head>
 <body>
-<nav>
-  <div class="container nav-inner">
-    <a class="brand" href="#home">RAJ<span>PATEL</span></a>
-    <ul class="nav-links">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </div>
-</nav>
+  <nav>
+    <div class="container nav-inner">
+      <a href="#home" class="logo">RAJ<span>PATEL</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#expertise">Expertise</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<header class="hero" id="home">
-  <div class="container hero-content">
-    <div class="eyebrow">Melbourne, Australia · Open to Aerospace Opportunities</div>
-    <h1>Raj <span>Patel</span></h1>
-    <div class="hero-role">Aerospace Engineering Postgraduate · UAV Systems · Aircraft Design · Research</div>
-    <p>Aerospace engineering postgraduate at RMIT University with project experience in UAV development, aircraft aerodynamics, propulsion, avionics integration, flight performance and engineering research.</p>
-    <div class="actions">
-      <a class="btn btn-primary" href="#projects">Explore Projects</a>
-      <a class="btn btn-secondary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">LinkedIn</a>
-      <a class="btn btn-secondary" href="https://orcid.org/0009-0000-7886-2864" target="_blank">ORCID</a>
+  <header class="hero" id="home">
+    <div class="container hero-content">
+      <div class="eyebrow">Melbourne, Australia · Open to Aerospace Opportunities</div>
+      <h1>Raj <span>Patel</span></h1>
+      <div class="hero-role">Aerospace Engineering Postgraduate · UAV Systems · Aircraft Design · Research</div>
+      <p class="hero-description">I apply aerodynamic analysis, propulsion knowledge, simulation and multidisciplinary engineering design to develop practical solutions for aircraft and unmanned aerial systems.</p>
+      <div class="buttons">
+        <a class="btn btn-primary" href="#projects">Explore My Work</a>
+        <a class="btn btn-secondary" href="#contact">Contact Me</a>
+      </div>
+      <div class="socials">
+        <a href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">LinkedIn ↗</a>
+        <a href="https://github.com/rajpatel-aero" target="_blank">GitHub ↗</a>
+        <a href="https://orcid.org/0009-0000-7886-2864" target="_blank">ORCID ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container stats">
+      <div class="stat"><strong>2</strong><span>Aerospace Engineering Degrees</span></div>
+      <div class="stat"><strong>9</strong><span>Engineering Projects</span></div>
+      <div class="stat"><strong>2</strong><span>Published Research Studies</span></div>
+      <div class="stat"><strong>2</strong><span>National and Global Competitions</span></div>
+    </div>
+
+    <section id="about">
+      <div class="container about-grid">
+        <div class="about-copy">
+          <span class="label">About Me</span>
+          <h2 class="section-title">Engineering ideas into practical aerospace solutions.</h2>
+          <p>I am pursuing a Master of Engineering in Aerospace at RMIT University in Melbourne and hold a Bachelor of Technology in Aeronautical Engineering.</p>
+          <p>My experience covers aircraft design, UAV systems, propulsion, aerodynamics, avionics integration, simulation, experimental research and technical documentation.</p>
+          <p>I am particularly interested in multidisciplinary aircraft design, high-performance UAVs, flight mechanics, propulsion integration and data-driven aerospace engineering.</p>
+        </div>
+        <div class="about-card">
+          <h3>Professional Profile</h3>
+          <div class="detail"><small>Current Study</small>Master of Engineering (Aerospace), RMIT University</div>
+          <div class="detail"><small>Previous Qualification</small>B.Tech in Aeronautical Engineering</div>
+          <div class="detail"><small>Core Interests</small>UAVs, Aircraft Design, Aerodynamics and Propulsion</div>
+          <div class="detail"><small>Location</small>Melbourne, Australia</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="expertise">
+      <div class="container">
+        <span class="label">Engineering Expertise</span>
+        <h2 class="section-title">Technical capability across the aircraft development process.</h2>
+        <p class="section-intro">My work combines aerospace theory, simulation, engineering tools and technical communication.</p>
+        <div class="expertise-grid">
+          <article class="expertise-card"><h3>Aircraft Design</h3><p>Configuration design, mission analysis, component integration, CG and performance.</p></article>
+          <article class="expertise-card"><h3>UAV Systems</h3><p>Propulsion selection, payload integration, avionics, flight-control systems and mission design.</p></article>
+          <article class="expertise-card"><h3>Aerodynamics</h3><p>Wing design, lift and drag analysis, stability, CFD, XFLR5 and flight performance.</p></article>
+          <article class="expertise-card"><h3>Engineering Analysis</h3><p>MATLAB, Python, ANSYS, Excel, calculations, simulation and technical reporting.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="container">
+        <span class="label">Selected Work</span>
+        <h2 class="section-title">Engineering projects, research and competition experience.</h2>
+        <p class="section-intro">Select a project to view my role, engineering contributions, skills and outcomes.</p>
+        <div class="projects-grid">
+          {''.join(cards_html)}
+        </div>
+      </div>
+    </section>
+
+    <section id="research">
+      <div class="container">
+        <span class="label">Research and Publications</span>
+        <h2 class="section-title">Research-driven engineering development.</h2>
+        <div class="research-card">
+          <h3>Published Research and Academic Work</h3>
+          <p>My research interests include aircraft stability, canard configurations, digital aircraft maintenance, aerodynamic optimisation and advanced aerospace systems.</p>
+          <div class="buttons">
+            <a class="btn btn-primary" href="https://orcid.org/0009-0000-7886-2864" target="_blank">View ORCID</a>
+            <a class="btn btn-secondary" href="https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations" target="_blank">ResearchGate</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="contact-card">
+          <span class="label">Contact</span>
+          <h2 class="section-title">Interested in discussing an aerospace engineering opportunity?</h2>
+          <p>I am open to graduate, internship and early-career opportunities involving aircraft design, UAV development, aerodynamics, propulsion, analysis and aviation technology.</p>
+          <div class="buttons">
+            <a class="btn btn-primary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">Connect on LinkedIn</a>
+            <a class="btn btn-secondary" href="https://github.com/rajpatel-aero" target="_blank">GitHub</a>
+            <a class="btn btn-secondary" href="https://orcid.org/0009-0000-7886-2864" target="_blank">ORCID</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer">
+      <p>© <span id="year"></span> Raj Patel. All rights reserved.</p>
+      <p>Aerospace Engineering Portfolio · Melbourne, Australia</p>
+    </div>
+  </footer>
+
+  <div class="modal" id="projectModal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">×</button>
+      <div id="modalContent"></div>
     </div>
   </div>
-</header>
 
-<main>
-<section id="projects">
-  <div class="container">
-    <span class="label">Engineering Portfolio</span>
-    <h2 class="section-title">Select a project to view the full case study.</h2>
-    <p class="section-intro">The homepage stays clean and recruiter-friendly. Full responsibilities, skills and outcomes appear only after a project is selected.</p>
-    <div class="project-grid" id="projectGrid"></div>
-  </div>
-</section>
+  <script>
+    const projects = {project_json};
 
-<section id="contact">
-  <div class="container">
-    <span class="label">Contact</span>
-    <h2 class="section-title">Open to aerospace engineering opportunities.</h2>
-    <div class="actions">
-      <a class="btn btn-primary" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">Connect on LinkedIn</a>
-      <a class="btn btn-secondary" href="https://github.com/rajpatel-aero" target="_blank">GitHub</a>
-    </div>
-  </div>
-</section>
-</main>
+    function openProject(index) {{
+      const p = projects[index];
+      const skills = p.skills.map(skill => `<span class="tag">${{skill}}</span>`).join("");
+      const contributions = p.contrib.map(item => `<li>${{item}}</li>`).join("");
+      const link = p.link ? `<div class="buttons"><a class="btn btn-primary" href="${{p.link}}" target="_blank">View Publication ↗</a></div>` : "";
+      document.getElementById("modalContent").innerHTML = `
+        <span class="project-type">${{p.type}}</span>
+        <h2 class="modal-title">${{p.title}}</h2>
+        <h3>Project Overview</h3>
+        <p>${{p.summary}}</p>
+        <h3>My Role</h3>
+        <p>${{p.role}}</p>
+        <h3>Key Contributions</h3>
+        <ul>${{contributions}}</ul>
+        <h3>Skills & Tools</h3>
+        <div class="tags">${{skills}}</div>
+        <div class="result">${{p.result}}</div>
+        ${{link}}
+      `;
+      document.getElementById("projectModal").classList.add("open");
+    }}
 
-<footer>
-  <div class="container footer">
-    <p>© <span id="year"></span> Raj Patel.</p>
-    <p>Aerospace Engineering Portfolio · Melbourne, Australia</p>
-  </div>
-</footer>
-
-<div class="modal" id="projectModal">
-  <div class="modal-card">
-    <button class="close" id="closeModal">×</button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
-<script>
-const projects = [
-{
-title:"Design and Development of a Jet-Propelled Unmanned Aerial System",
-badges:["Featured Capstone","Industry Collaboration · Confidential"],
-summary:"A multidisciplinary capstone focused on the conceptual design and systems integration of a compact jet-propelled unmanned aerial system.",
-role:"Propulsion and systems-integration contributor",
-contributions:["Propulsion-system evaluation and selection.","Fuel-system integration studies and mission fuel assessment.","Weight estimation, component placement and centre-of-gravity analysis.","Servo torque calculations and MATLAB-based analysis.","Technical documentation and design justification."],
-skills:["UAV Design","Propulsion","Weight & Balance","CG Analysis","Flight Stability","MATLAB","XFLR5"],
-result:"Only a high-level overview is shown. Confidential dimensions, layouts, calculations and proprietary design information are intentionally withheld."
-},
-{
-title:"AI-Based Aircraft Fault Detection and Diagnostics",
-badges:["Published Research","Digital Aviation"],
-summary:"Research examining how AI, AR and VR can support aircraft maintenance training and operations through smarter diagnostics and improved decision support.",
-role:"Researcher and co-author",
-contributions:["Reviewed AI, AR and VR applications in aircraft maintenance.","Analysed maintenance workflows and emerging digital technologies.","Developed an innovation proposal for integrated maintenance support.","Produced technical research writing and engineering recommendations."],
-skills:["Aircraft Maintenance","Artificial Intelligence","AR/VR","Human Factors","Research Writing"],
-result:"Published research is available through ResearchGate."
-},
-{
-title:"Wing Aerodynamic Design",
-badges:["RMIT University","Advanced Aerodynamics"],
-summary:"Aerodynamic optimisation of the Bombardier Challenger 3500 wing to improve cruise efficiency, take-off performance and predicted aircraft range.",
-role:"Responsible for flap optimisation, finite-wing design and range recalculation",
-contributions:["Optimised take-off flap configuration.","Optimised finite-wing twist distribution to reduce induced drag.","Compared 2-D and 3-D aerodynamic behaviour.","Recalculated aircraft range using improved coefficients.","Prepared technical presentation material."],
-skills:["Wing Design","Airfoil Optimisation","Flap Design","Finite-Wing Theory","MATLAB","Breguet Range"],
-result:"Improved Oswald efficiency from 0.80 to 0.882, increased L/D from 39.9 to 45.15 and predicted approximately 13.5% greater range."
-},
-{
-title:"Effect of Vertical location canard with three different locations to make Airplane Eco friendly",
-badges:["Published Research","Aircraft Stability"],
-summary:"Published study comparing three vertical canard locations and their effect on aircraft lift, drag, stability and efficiency.",
-role:"Research contributor and co-author",
-contributions:["Supported aircraft configuration modelling.","Performed aerodynamic and stability analysis using XFLR5.","Compared lift, drag and efficiency across three configurations.","Evaluated winglet and vertical-tail effects.","Co-authored the research."],
-skills:["Canard Aircraft","XFLR5","Stability","Lift & Drag","Winglets","Research Writing"],
-result:"The intermediate canard location was identified as the preferred arrangement among the configurations analysed."
-},
-{
-title:"Supersonic Combustion with cavity-based Fuel Injection",
-badges:["Academic Project","Scramjet Propulsion"],
-summary:"Design-focused investigation of a scramjet engine using cavity-based fuel injection to support stable combustion under supersonic flow conditions.",
-role:"Design and research contributor",
-contributions:["Developed the conceptual scramjet and cavity-based injection arrangement.","Studied combustion stability and fuel-air mixing.","Evaluated approaches for improving efficiency and reducing fuel consumption.","Connected propulsion concepts with sustainable aviation objectives."],
-skills:["Scramjet","Supersonic Combustion","Fuel Injection","High-Speed Aerodynamics","Sustainable Propulsion"],
-result:"The project developed practical understanding of high-speed combustion and propulsion design."
-},
-{
-title:"Decay Characteristics of Sonic Jets",
-badges:["Major Research Project","CFD"],
-summary:"Investigation of sonic jets issuing from circular and non-circular converging nozzles.",
-role:"CFD and aerodynamic analysis contributor",
-contributions:["Designed circular and non-circular nozzle geometries.","Developed computational meshes and simulations.","Analysed pressure, velocity, Mach number and jet-decay behaviour.","Compared multiple nozzle configurations.","Prepared the engineering report."],
-skills:["ANSYS CFX","ICEM CFD","Compressible Flow","Nozzle Design","Jet Propulsion","Data Analysis"],
-result:"Compared six nozzle configurations to understand how geometry influences sonic-jet decay and mixing."
-},
-{
-title:"SAE International AERO DESIGN EAST 2023 Competition",
-badges:["International Competition","Regular Class RC Aircraft"],
-summary:"Participated with Team IARE Lakshya in SAE Aero Design East 2023 in Lakeland, Florida.",
-role:"Avionics Lead",
-contributions:["Led avionics-system selection and integration.","Performed component trade-off studies.","Contributed to technical documentation.","Supported performance evaluation and prototype testing.","Collaborated with multidisciplinary teams."],
-skills:["Avionics Integration","RC Aircraft","Systems Engineering","Trade Studies","XFLR5","MATLAB","ANSYS"],
-result:"Practical experience across conceptual design, systems integration, prototype development and international competition delivery."
-},
-{
-title:"SAE India AEROTHON COMPETITION",
-badges:["National Competition","Autonomous Multirotor UAV"],
-summary:"Contributed to Team IARE Lakshya's autonomous multirotor UAV for target identification and payload delivery.",
-role:"Avionics Technician",
-contributions:["Supported selection of flight controller, GPS, telemetry, cameras and companion computer.","Conducted avionics trade-off analysis.","Assisted with material evaluation and performance assessment.","Supported autonomous-flight architecture.","Contributed to technical documentation."],
-skills:["UAV Avionics","Pixhawk Cube Orange","Raspberry Pi","GPS","Telemetry","Autonomous Flight"],
-result:"Developed practical understanding of autonomous UAV architecture and subsystem selection."
-},
-{
-title:"RC Plane Modelling and Flight Test",
-badges:["Foundational Project","Hands-on Aeromodelling"],
-summary:"My first hands-on fixed-wing aeromodelling project covering design, fabrication, assembly, trimming and flight testing.",
-role:"Design, fabrication and flight-test contributor",
-contributions:["Fabricated and assembled the aircraft structure.","Installed propulsion and control systems.","Balanced the centre of gravity.","Troubleshot structural and control issues.","Participated in flight testing."],
-skills:["Aeromodelling","Aircraft Assembly","Flight Testing","CG Balancing","Electric Propulsion","Troubleshooting"],
-result:"The project built the practical foundation that led to later aerospace design teams and competitions."
-}
-];
-
-const grid=document.getElementById("projectGrid");
-projects.forEach((p,i)=>{
-  const card=document.createElement("article");
-  card.className="project-card";
-  const badges=p.badges.map(b=>`<span class="badge ${b.includes("Confidential")?"confidential":""}">${b}</span>`).join("");
-  card.innerHTML=`<div class="card-top">${p.badges[0]}</div><div class="card-body"><div class="meta">${badges}</div><h3>${p.title}</h3><p>${p.summary}</p><button class="view-btn" onclick="openProject(${i})">View Project →</button></div>`;
-  grid.appendChild(card);
-});
-
-function openProject(i){
-  const p=projects[i];
-  const badges=p.badges.map(b=>`<span class="badge ${b.includes("Confidential")?"confidential":""}">${b}</span>`).join("");
-  const contributions=p.contributions.map(x=>`<li>${x}</li>`).join("");
-  const skills=p.skills.map(x=>`<span class="tag">${x}</span>`).join("");
-  document.getElementById("modalContent").innerHTML=`
-    <div class="meta">${badges}</div>
-    <h2 class="modal-title">${p.title}</h2>
-    <h3>Project Overview</h3><p class="modal-copy">${p.summary}</p>
-    <h3>My Role</h3><p class="modal-copy">${p.role}</p>
-    <h3>Key Contributions</h3><ul>${contributions}</ul>
-    <h3>Skills & Tools</h3><div class="tags">${skills}</div>
-    <div class="result">${p.result}</div>`;
-  document.getElementById("projectModal").classList.add("open");
-}
-
-document.getElementById("closeModal").onclick=()=>document.getElementById("projectModal").classList.remove("open");
-document.getElementById("projectModal").onclick=e=>{if(e.target.id==="projectModal")e.currentTarget.classList.remove("open")};
-document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("projectModal").classList.remove("open")});
-document.getElementById("year").textContent=new Date().getFullYear();
-</script>
+    document.getElementById("modalClose").onclick = () => document.getElementById("projectModal").classList.remove("open");
+    document.getElementById("projectModal").onclick = e => {{
+      if (e.target.id === "projectModal") e.currentTarget.classList.remove("open");
+    }};
+    document.addEventListener("keydown", e => {{
+      if (e.key === "Escape") document.getElementById("projectModal").classList.remove("open");
+    }});
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
 """
 
-path = Path("/mnt/data/index.html")
-path.write_text(html, encoding="utf-8")
-print(path)
+(root / "index.html").write_text(index_html, encoding="utf-8")
+
+instructions = """UPLOAD TO GITHUB
+
+1. Extract this ZIP.
+2. Open your GitHub repository: rajpatel-aero/rajpatel-aero.github.io
+3. Open the existing index.html and click the pencil icon.
+4. Press Ctrl+A, then Backspace.
+5. Open the index.html from this extracted folder using Notepad.
+6. Press Ctrl+A, Ctrl+C.
+7. Paste into GitHub.
+8. Confirm the first line is <!DOCTYPE html>
+9. Commit changes.
+10. Upload the images folder using Add file > Upload files.
+11. Wait 1-3 minutes and refresh your website with Ctrl+F5.
+
+Repository structure:
+index.html
+images/
+"""
+(root / "UPLOAD-INSTRUCTIONS.txt").write_text(instructions, encoding="utf-8")
+
+zip_path = Path("/mnt/data/rajpatel-portfolio-complete.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for p in root.rglob("*"):
+        if p.is_file():
+            z.write(p, p.relative_to(root))
+
+print(f"Created {zip_path}")
+print(f"Index size: {(root/'index.html').stat().st_size} bytes")
