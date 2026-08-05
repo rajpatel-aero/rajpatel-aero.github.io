@@ -1,3226 +1,1133 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = """<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="Raj Patel - Aerospace Engineering Portfolio"
-    >
-
-    <title>Raj Patel | Aerospace Engineering Portfolio</title>
-
-    <!-- Google Font -->
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- Font Awesome Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
-
-    <style>
-        /* =====================================================
-           BASIC SETTINGS
-        ===================================================== */
-
-        :root {
-            --navy-950: #06111f;
-            --navy-900: #091a2e;
-            --navy-850: #0c2139;
-            --navy-800: #102944;
-
-            --blue-600: #2563eb;
-            --blue-500: #3b82f6;
-            --blue-400: #60a5fa;
-            --cyan-400: #22d3ee;
-
-            --white: #ffffff;
-            --light: #f4f8fc;
-            --light-blue: #eaf3ff;
-
-            --text-dark: #132238;
-            --text-medium: #526174;
-            --text-light: #9fb0c6;
-
-            --border: rgba(255, 255, 255, 0.12);
-            --dark-border: #dce6f1;
-
-            --shadow:
-                0 18px 50px rgba(9, 26, 46, 0.12);
-
-            --shadow-dark:
-                0 24px 70px rgba(0, 0, 0, 0.28);
-
-            --radius-large: 28px;
-            --radius-medium: 18px;
-            --radius-small: 12px;
-
-            --transition: 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 90px;
-        }
-
-        body {
-            font-family: "Inter", sans-serif;
-            background: var(--light);
-            color: var(--text-dark);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
-
-        body.modal-open {
-            overflow: hidden;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button,
-        input,
-        textarea {
-            font-family: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        img {
-            max-width: 100%;
-            display: block;
-        }
-
-        .container {
-            width: min(1160px, calc(100% - 40px));
-            margin: 0 auto;
-        }
-
-        .section {
-            padding: 100px 0;
-        }
-
-        .section-light {
-            background: var(--light);
-        }
-
-        .section-white {
-            background: var(--white);
-        }
-
-        .section-dark {
-            background:
-                radial-gradient(
-                    circle at 80% 15%,
-                    rgba(37, 99, 235, 0.18),
-                    transparent 35%
-                ),
-                var(--navy-950);
-
-            color: var(--white);
-        }
-
-        .section-heading {
-            max-width: 720px;
-            margin-bottom: 52px;
-        }
-
-        .section-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-
-            margin-bottom: 14px;
-
-            color: var(--blue-600);
-            font-size: 0.78rem;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        .section-label::before {
-            content: "";
-            width: 30px;
-            height: 2px;
-            background: var(--blue-600);
-        }
-
-        .section-dark .section-label {
-            color: var(--blue-400);
-        }
-
-        .section-dark .section-label::before {
-            background: var(--blue-400);
-        }
-
-        .section-title {
-            font-family: "Space Grotesk", sans-serif;
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            line-height: 1.15;
-            letter-spacing: -0.04em;
-            margin-bottom: 16px;
-        }
-
-        .section-description {
-            color: var(--text-medium);
-            font-size: 1rem;
-            max-width: 650px;
-        }
-
-        .section-dark .section-description {
-            color: var(--text-light);
-        }
-
-
-        /* =====================================================
-           NAVIGATION
-        ===================================================== */
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-
-            background: rgba(6, 17, 31, 0.84);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        .nav-container {
-            min-height: 76px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .logo {
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: -0.03em;
-        }
-
-        .logo span {
-            color: var(--blue-400);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #d9e5f4;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--blue-400);
-        }
-
-        .nav-contact {
-            padding: 11px 18px;
-
-            color: var(--white) !important;
-            background: var(--blue-600);
-            border-radius: 10px;
-
-            transition: var(--transition);
-        }
-
-        .nav-contact:hover {
-            background: var(--blue-500);
-            transform: translateY(-2px);
-        }
-
-        .mobile-menu-button {
-            display: none;
-
-            width: 44px;
-            height: 44px;
-
-            border: 1px solid var(--border);
-            border-radius: 10px;
-
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.06);
-
-            font-size: 1.2rem;
-        }
-
-
-        /* =====================================================
-           HERO SECTION
-        ===================================================== */
-
-        .hero {
-            min-height: 760px;
-            padding: 150px 0 115px;
-
-            display: flex;
-            align-items: center;
-
-            position: relative;
-            overflow: hidden;
-
-            color: var(--white);
-            background:
-                linear-gradient(
-                    125deg,
-                    rgba(6, 17, 31, 0.98),
-                    rgba(9, 31, 58, 0.96)
-                );
-        }
-
-        .hero::before {
-            content: "";
-            position: absolute;
-            width: 520px;
-            height: 520px;
-            border-radius: 50%;
-
-            top: -170px;
-            right: -120px;
-
-            background: rgba(37, 99, 235, 0.22);
-            filter: blur(20px);
-        }
-
-        .hero::after {
-            content: "";
-            position: absolute;
-            width: 380px;
-            height: 380px;
-            border-radius: 50%;
-
-            bottom: -180px;
-            left: -120px;
-
-            background: rgba(34, 211, 238, 0.12);
-            filter: blur(20px);
-        }
-
-        .hero-grid {
-            position: relative;
-            z-index: 2;
-
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 70px;
-            align-items: center;
-        }
-
-        .availability-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-
-            margin-bottom: 26px;
-            padding: 10px 15px;
-
-            color: #dcecff;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 999px;
-
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-
-        .availability-dot {
-            width: 9px;
-            height: 9px;
-
-            border-radius: 50%;
-            background: #34d399;
-
-            box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.12);
-        }
-
-        .hero-title {
-            font-family: "Space Grotesk", sans-serif;
-            font-size: clamp(3.5rem, 7vw, 6.5rem);
-            line-height: 0.95;
-            letter-spacing: -0.065em;
-            margin-bottom: 25px;
-        }
-
-        .hero-title span {
-            display: block;
-
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.55);
-        }
-
-        .hero-role {
-            margin-bottom: 20px;
-
-            color: var(--blue-400);
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: clamp(1.15rem, 2vw, 1.55rem);
-            font-weight: 600;
-        }
-
-        .hero-description {
-            max-width: 650px;
-            margin-bottom: 34px;
-
-            color: #afc0d5;
-            font-size: 1.03rem;
-        }
-
-        .hero-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 13px;
-            margin-bottom: 30px;
-        }
-
-        .primary-button,
-        .secondary-button {
-            min-height: 49px;
-            padding: 0 20px;
-
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-
-            border-radius: 11px;
-            font-size: 0.9rem;
-            font-weight: 700;
-
-            transition: var(--transition);
-        }
-
-        .primary-button {
-            color: var(--white);
-            background: var(--blue-600);
-            border: 1px solid var(--blue-600);
-        }
-
-        .primary-button:hover {
-            background: var(--blue-500);
-            border-color: var(--blue-500);
-            transform: translateY(-3px);
-        }
-
-        .secondary-button {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-        }
-
-        .secondary-button:hover {
-            background: rgba(255, 255, 255, 0.11);
-            transform: translateY(-3px);
-        }
-
-        .hero-social-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-
-            color: #b8c7d9;
-            font-size: 0.84rem;
-            font-weight: 600;
-
-            transition: var(--transition);
-        }
-
-        .social-link:hover {
-            color: var(--blue-400);
-        }
-
-        .profile-wrapper {
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        .profile-wrapper::before {
-            content: "";
-            position: absolute;
-
-            width: 340px;
-            height: 340px;
-
-            top: 50%;
-            left: 50%;
-
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-
-            background: rgba(37, 99, 235, 0.24);
-            filter: blur(35px);
-        }
-
-        .profile-card {
-            position: relative;
-            z-index: 2;
-
-            width: min(100%, 420px);
-            padding: 16px;
-
-            background: rgba(255, 255, 255, 0.075);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 32px;
-
-            box-shadow: var(--shadow-dark);
-            backdrop-filter: blur(18px);
-        }
-
-        .profile-image-placeholder {
-            min-height: 485px;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-
-            border-radius: 22px;
-
-            color: #a9bad0;
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(37, 99, 235, 0.22),
-                    rgba(7, 24, 43, 0.95)
-                );
-
-            border: 1px dashed rgba(255, 255, 255, 0.22);
-            text-align: center;
-        }
-
-        .profile-image-placeholder i {
-            font-size: 4rem;
-            color: var(--blue-400);
-        }
-
-        .profile-image-placeholder span {
-            max-width: 220px;
-            font-size: 0.88rem;
-        }
-
-        /*
-        After uploading your profile image into an images folder,
-        replace the placeholder div with:
-
-        <img
-            class="profile-image"
-            src="images/profile.jpg"
-            alt="Raj Patel"
-        >
-        */
-
-        .profile-image {
-            width: 100%;
-            height: 485px;
-            object-fit: cover;
-            object-position: center;
-            border-radius: 22px;
-        }
-
-        .floating-card {
-            position: absolute;
-            z-index: 4;
-
-            right: -32px;
-            bottom: 55px;
-
-            padding: 15px 18px;
-
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            color: var(--white);
-            background: rgba(8, 24, 44, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 14px;
-
-            box-shadow: var(--shadow-dark);
-            backdrop-filter: blur(15px);
-        }
-
-        .floating-card-icon {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-400);
-            background: rgba(59, 130, 246, 0.13);
-            border-radius: 11px;
-        }
-
-        .floating-card small {
-            display: block;
-            color: #93a8c0;
-            font-size: 0.72rem;
-        }
-
-        .floating-card strong {
-            font-size: 0.87rem;
-        }
-
-
-        /* =====================================================
-           STATISTICS
-        ===================================================== */
-
-        .statistics {
-            position: relative;
-            z-index: 10;
-
-            margin-top: -58px;
-        }
-
-        .statistics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        .stat-card {
-            min-height: 160px;
-            padding: 27px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-
-            background: var(--white);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--radius-medium);
-
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px);
-            border-color: #bcd5f7;
-        }
-
-        .stat-icon {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 11px;
-        }
-
-        .stat-number {
-            margin-top: 15px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 2.1rem;
-            line-height: 1;
-            color: var(--navy-900);
-        }
-
-        .stat-text {
-            color: var(--text-medium);
-            font-size: 0.84rem;
-            font-weight: 600;
-        }
-
-
-        /* =====================================================
-           ABOUT
-        ===================================================== */
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 65px;
-            align-items: start;
-        }
-
-        .about-content p {
-            margin-bottom: 18px;
-            color: var(--text-medium);
-        }
-
-        .about-content p:first-of-type {
-            color: var(--text-dark);
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .about-highlight {
-            margin-top: 30px;
-            padding: 24px;
-
-            display: flex;
-            gap: 18px;
-
-            background: var(--light-blue);
-            border-left: 4px solid var(--blue-600);
-            border-radius: 0 var(--radius-small) var(--radius-small) 0;
-        }
-
-        .about-highlight i {
-            margin-top: 4px;
-            color: var(--blue-600);
-            font-size: 1.4rem;
-        }
-
-        .about-highlight strong {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .about-highlight p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        .profile-information-card {
-            padding: 34px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    var(--navy-900),
-                    var(--navy-800)
-                );
-
-            border-radius: var(--radius-large);
-            color: var(--white);
-            box-shadow: var(--shadow);
-        }
-
-        .profile-information-card h3 {
-            margin-bottom: 25px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.45rem;
-        }
-
-        .profile-information-list {
-            display: grid;
-            gap: 19px;
-        }
-
-        .profile-information-item {
-            display: grid;
-            grid-template-columns: 42px 1fr;
-            gap: 14px;
-            align-items: start;
-        }
-
-        .profile-information-icon {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-400);
-            background: rgba(59, 130, 246, 0.12);
-            border-radius: 11px;
-        }
-
-        .profile-information-item small {
-            display: block;
-            margin-bottom: 2px;
-
-            color: #90a5bd;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .profile-information-item strong {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-
-        /* =====================================================
-           SKILLS
-        ===================================================== */
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-        }
-
-        .skill-category {
-            padding: 30px;
-
-            background: var(--white);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--radius-medium);
-
-            transition: var(--transition);
-        }
-
-        .skill-category:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow);
-            border-color: #bdd7fa;
-        }
-
-        .skill-category-icon {
-            width: 50px;
-            height: 50px;
-
-            margin-bottom: 20px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 13px;
-
-            font-size: 1.25rem;
-        }
-
-        .skill-category h3 {
-            margin-bottom: 15px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.15rem;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skill-tag {
-            padding: 7px 10px;
-
-            color: #3e536c;
-            background: #f3f7fb;
-            border: 1px solid #e3ebf4;
-            border-radius: 8px;
-
-            font-size: 0.76rem;
-            font-weight: 600;
-        }
-
-
-        /* =====================================================
-           ENGINEERING EXPERTISE
-        ===================================================== */
-
-        .expertise-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .expertise-card {
-            padding: 28px;
-
-            display: flex;
-            gap: 18px;
-
-            background: rgba(255, 255, 255, 0.055);
-            border: 1px solid rgba(255, 255, 255, 0.11);
-            border-radius: var(--radius-medium);
-
-            transition: var(--transition);
-        }
-
-        .expertise-card:hover {
-            transform: translateY(-6px);
-            background: rgba(255, 255, 255, 0.085);
-            border-color: rgba(96, 165, 250, 0.45);
-        }
-
-        .expertise-icon {
-            flex: 0 0 48px;
-            width: 48px;
-            height: 48px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-400);
-            background: rgba(59, 130, 246, 0.12);
-            border-radius: 13px;
-        }
-
-        .expertise-card h3 {
-            margin-bottom: 7px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.08rem;
-        }
-
-        .expertise-card p {
-            color: var(--text-light);
-            font-size: 0.86rem;
-        }
-
-
-        /* =====================================================
-           EXPERIENCE
-        ===================================================== */
-
-        .experience-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-        }
-
-        .experience-card {
-            min-height: 330px;
-            padding: 30px;
-
-            display: flex;
-            flex-direction: column;
-
-            background: var(--white);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--radius-medium);
-
-            transition: var(--transition);
-        }
-
-        .experience-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow);
-            border-color: #b9d5f9;
-        }
-
-        .experience-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 28px;
-        }
-
-        .company-icon {
-            width: 50px;
-            height: 50px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 14px;
-
-            font-size: 1.3rem;
-        }
-
-        .experience-year {
-            padding: 6px 9px;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 7px;
-
-            font-size: 0.72rem;
-            font-weight: 700;
-        }
-
-        .experience-card h3 {
-            margin-bottom: 7px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.22rem;
-        }
-
-        .experience-role {
-            margin-bottom: 17px;
-            color: var(--blue-600);
-            font-size: 0.87rem;
-            font-weight: 700;
-        }
-
-        .experience-summary {
-            margin-bottom: 25px;
-            color: var(--text-medium);
-            font-size: 0.87rem;
-        }
-
-        .view-details-button {
-            margin-top: auto;
-
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-
-            border: none;
-            color: var(--text-dark);
-            background: transparent;
-
-            font-size: 0.86rem;
-            font-weight: 800;
-
-            transition: var(--transition);
-        }
-
-        .view-details-button:hover {
-            color: var(--blue-600);
-            gap: 13px;
-        }
-
-
-        /* =====================================================
-           PROJECT PLACEHOLDER
-        ===================================================== */
-
-        .project-placeholder {
-            min-height: 390px;
-            padding: 55px;
-
-            display: grid;
-            place-items: center;
-
-            text-align: center;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(37, 99, 235, 0.11),
-                    rgba(34, 211, 238, 0.05)
-                );
-
-            border: 1px dashed #abc8ed;
-            border-radius: var(--radius-large);
-        }
-
-        .project-placeholder-content {
-            max-width: 610px;
-        }
-
-        .project-placeholder-icon {
-            width: 78px;
-            height: 78px;
-
-            margin: 0 auto 22px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--white);
-            border-radius: 22px;
-
-            box-shadow: var(--shadow);
-            font-size: 2rem;
-        }
-
-        .project-placeholder h3 {
-            margin-bottom: 14px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.8rem;
-        }
-
-        .project-placeholder p {
-            color: var(--text-medium);
-        }
-
-
-        /* =====================================================
-           RESEARCH
-        ===================================================== */
-
-        .research-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        .research-card {
-            padding: 32px;
-
-            background: rgba(255, 255, 255, 0.055);
-            border: 1px solid rgba(255, 255, 255, 0.11);
-            border-radius: var(--radius-medium);
-
-            transition: var(--transition);
-        }
-
-        .research-card:hover {
-            transform: translateY(-7px);
-            border-color: rgba(96, 165, 250, 0.5);
-        }
-
-        .research-type {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 7px 10px;
-
-            color: var(--blue-400);
-            background: rgba(59, 130, 246, 0.12);
-            border-radius: 7px;
-
-            font-size: 0.72rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .research-card h3 {
-            margin-bottom: 14px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.2rem;
-            line-height: 1.4;
-        }
-
-        .research-card p {
-            margin-bottom: 22px;
-            color: var(--text-light);
-            font-size: 0.88rem;
-        }
-
-        .research-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-
-            color: var(--blue-400);
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           CONTACT
-        ===================================================== */
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 0.85fr 1.15fr;
-            gap: 55px;
-            align-items: start;
-        }
-
-        .contact-content p {
-            margin-bottom: 30px;
-            color: var(--text-medium);
-        }
-
-        .contact-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .contact-item {
-            padding: 17px;
-
-            display: flex;
-            align-items: center;
-            gap: 14px;
-
-            background: var(--white);
-            border: 1px solid var(--dark-border);
-            border-radius: 13px;
-        }
-
-        .contact-icon {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 11px;
-        }
-
-        .contact-item small {
-            display: block;
-            color: var(--text-medium);
-            font-size: 0.72rem;
-        }
-
-        .contact-item strong {
-            font-size: 0.87rem;
-        }
-
-        .contact-card {
-            padding: 38px;
-
-            color: var(--white);
-            background:
-                linear-gradient(
-                    145deg,
-                    var(--navy-900),
-                    var(--navy-800)
-                );
-
-            border-radius: var(--radius-large);
-            box-shadow: var(--shadow);
-        }
-
-        .contact-card h3 {
-            margin-bottom: 12px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.5rem;
-        }
-
-        .contact-card p {
-            margin-bottom: 25px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .contact-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .footer {
-            padding: 30px 0;
-            color: #9dafc3;
-            background: #030b15;
-            border-top: 1px solid rgba(255, 255, 255, 0.07);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 25px;
-        }
-
-        .footer p {
-            font-size: 0.8rem;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 17px;
-        }
-
-        .footer-links a {
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--blue-400);
-        }
-
-
-        /* =====================================================
-           EXPERIENCE MODAL
-        ===================================================== */
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-
-            padding: 25px;
-
-            display: none;
-            align-items: center;
-            justify-content: center;
-
-            background: rgba(2, 8, 16, 0.8);
-            backdrop-filter: blur(12px);
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal {
-            position: relative;
-
-            width: min(680px, 100%);
-            max-height: 90vh;
-            overflow-y: auto;
-
-            padding: 40px;
-
-            background: var(--white);
-            border-radius: 24px;
-
-            box-shadow: var(--shadow-dark);
-            animation: modalOpen 0.28s ease;
-        }
-
-        @keyframes modalOpen {
-            from {
-                opacity: 0;
-                transform: scale(0.94) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            border: 1px solid var(--dark-border);
-            border-radius: 10px;
-
-            color: var(--text-dark);
-            background: var(--light);
-            font-size: 1rem;
-        }
-
-        .modal-company-icon {
-            width: 58px;
-            height: 58px;
-
-            margin-bottom: 22px;
-
-            display: grid;
-            place-items: center;
-
-            color: var(--blue-600);
-            background: var(--light-blue);
-            border-radius: 16px;
-
-            font-size: 1.5rem;
-        }
-
-        .modal h2 {
-            padding-right: 45px;
-            margin-bottom: 5px;
-
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.8rem;
-        }
-
-        .modal-role {
-            margin-bottom: 28px;
-            color: var(--blue-600);
-            font-weight: 700;
-        }
-
-        .modal-information-grid {
-            margin-bottom: 28px;
-
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 13px;
-        }
-
-        .modal-information-item {
-            padding: 15px;
-
-            background: var(--light);
-            border: 1px solid var(--dark-border);
-            border-radius: 11px;
-        }
-
-        .modal-information-item small {
-            display: block;
-            margin-bottom: 3px;
-
-            color: var(--text-medium);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .modal-information-item strong {
-            font-size: 0.86rem;
-        }
-
-        .modal-description h3,
-        .modal-skills h3 {
-            margin-bottom: 10px;
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.05rem;
-        }
-
-        .modal-description p {
-            margin-bottom: 23px;
-            color: var(--text-medium);
-            font-size: 0.9rem;
-        }
-
-        .modal-skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-
-        /* =====================================================
-           ANIMATION
-        ===================================================== */
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition:
-                opacity 0.7s ease,
-                transform 0.7s ease;
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-
-        /* =====================================================
-           RESPONSIVE DESIGN
-        ===================================================== */
-
-        @media (max-width: 1000px) {
-            .hero-grid,
-            .about-grid,
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-grid {
-                gap: 55px;
-            }
-
-            .hero-content {
-                max-width: 760px;
-            }
-
-            .profile-wrapper {
-                max-width: 470px;
-                margin: 0 auto;
-            }
-
-            .statistics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .skills-grid,
-            .experience-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .experience-card:last-child {
-                grid-column: span 2;
-            }
-
-            .contact-content {
-                max-width: 700px;
-            }
-        }
-
-        @media (max-width: 820px) {
-            .mobile-menu-button {
-                display: grid;
-                place-items: center;
-            }
-
-            .nav-links {
-                position: absolute;
-                top: 76px;
-                left: 0;
-                width: 100%;
-
-                padding: 25px;
-
-                display: none;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-
-                background: rgba(6, 17, 31, 0.98);
-                border-bottom: 1px solid var(--border);
-            }
-
-            .nav-links.show {
-                display: flex;
-            }
-
-            .nav-contact {
-                width: 100%;
-                text-align: center;
-            }
-
-            .expertise-grid,
-            .research-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 650px) {
-            .container {
-                width: min(100% - 28px, 1160px);
-            }
-
-            .section {
-                padding: 75px 0;
-            }
-
-            .hero {
-                min-height: auto;
-                padding: 125px 0 100px;
-            }
-
-            .hero-title {
-                font-size: clamp(3rem, 17vw, 4.8rem);
-            }
-
-            .availability-badge {
-                align-items: flex-start;
-                border-radius: 16px;
-            }
-
-            .statistics {
-                margin-top: -40px;
-            }
-
-            .statistics-grid,
-            .skills-grid,
-            .experience-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .experience-card:last-child {
-                grid-column: auto;
-            }
-
-            .stat-card {
-                min-height: 145px;
-            }
-
-            .floating-card {
-                right: -5px;
-                bottom: 35px;
-            }
-
-            .profile-image-placeholder,
-            .profile-image {
-                height: 420px;
-                min-height: 420px;
-            }
-
-            .profile-information-card,
-            .contact-card {
-                padding: 27px;
-            }
-
-            .project-placeholder {
-                padding: 35px 22px;
-            }
-
-            .modal {
-                padding: 30px 22px;
-            }
-
-            .modal-information-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Raj Patel Aerospace Engineering Portfolio">
+  <title>Raj Patel | Aerospace Engineering Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#050a13;
+      --bg2:#091426;
+      --panel:#0d1c31;
+      --primary:#65b5ff;
+      --primary2:#9ed2ff;
+      --white:#fff;
+      --light:#f4f7fb;
+      --lightblue:#eaf3ff;
+      --dark:#132238;
+      --muted:#526174;
+      --muted2:#a7b7ca;
+      --line:rgba(130,190,255,.18);
+      --border:#dce6f1;
+      --shadow:0 18px 50px rgba(9,26,46,.12);
+      --shadowDark:0 25px 70px rgba(0,0,0,.38);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{
+      font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--dark);
+      background:var(--light);
+      line-height:1.7;
+      overflow-x:hidden;
+    }
+    body.modal-open{overflow:hidden}
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+    button{font:inherit;cursor:pointer}
+    .container{width:min(1160px,calc(100% - 40px));margin:auto}
+    .section{padding:100px 0}
+    .section-white{background:#fff}
+    .section-light{background:var(--light)}
+    .section-dark{
+      color:#fff;
+      background:
+        radial-gradient(circle at 80% 15%,rgba(37,99,235,.18),transparent 35%),
+        var(--bg);
+    }
+    .section-heading{max-width:760px;margin-bottom:50px}
+    .section-label{
+      display:inline-flex;align-items:center;gap:9px;
+      color:#2563eb;font-size:.78rem;font-weight:800;
+      letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px
+    }
+    .section-label::before{content:"";width:30px;height:2px;background:currentColor}
+    .section-dark .section-label{color:var(--primary)}
+    .section-title{
+      font-size:clamp(2rem,4vw,3.2rem);
+      line-height:1.15;letter-spacing:-.045em;
+      margin-bottom:16px;font-weight:800
+    }
+    .section-description{max-width:680px;color:var(--muted)}
+    .section-dark .section-description{color:var(--muted2)}
+
+    .navbar{
+      position:fixed;inset:0 0 auto 0;z-index:1000;
+      background:rgba(5,10,19,.88);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(18px)
+    }
+    .nav-container{
+      min-height:76px;display:flex;align-items:center;
+      justify-content:space-between;gap:28px
+    }
+    .logo{color:#fff;font-size:1.24rem;font-weight:900;letter-spacing:.04em}
+    .logo span{color:var(--primary)}
+    .nav-links{display:flex;align-items:center;gap:26px;list-style:none}
+    .nav-links a{color:#d9e5f4;font-size:.9rem;font-weight:700;transition:.3s}
+    .nav-links a:hover,.nav-links a.active{color:var(--primary)}
+    .nav-contact{
+      padding:10px 17px;background:#2563eb;border-radius:10px;color:#fff!important
+    }
+    .mobile-menu-button{
+      display:none;width:44px;height:44px;color:#fff;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);border-radius:10px
+    }
+
+    .hero{
+      min-height:780px;padding:145px 0 118px;
+      display:flex;align-items:center;position:relative;overflow:hidden;color:#fff;
+      background:
+        radial-gradient(circle at 18% 8%,rgba(51,139,230,.24),transparent 30rem),
+        radial-gradient(circle at 88% 18%,rgba(51,139,230,.16),transparent 27rem),
+        linear-gradient(135deg,#06111f 0%,#0a1d36 52%,#071321 100%)
+    }
+    .hero::before{
+      content:"";position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(101,181,255,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(101,181,255,.04) 1px,transparent 1px);
+      background-size:52px 52px
+    }
+    .hero-grid{
+      position:relative;z-index:2;display:grid;
+      grid-template-columns:1.12fr .88fr;gap:70px;align-items:center
+    }
+    .availability-badge{
+      display:inline-flex;align-items:center;gap:10px;
+      margin-bottom:26px;padding:10px 15px;
+      color:#dcecff;background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;font-size:.82rem;font-weight:700
+    }
+    .availability-dot{
+      width:9px;height:9px;border-radius:50%;background:#34d399;
+      box-shadow:0 0 0 6px rgba(52,211,153,.12)
+    }
+    .hero-title{
+      font-size:clamp(4rem,8vw,7rem);font-weight:800;
+      line-height:.96;letter-spacing:-.07em;margin-bottom:25px
+    }
+    .hero-title span{color:var(--primary)}
+    .hero-role{
+      margin-bottom:20px;color:var(--primary2);
+      font-size:clamp(1.15rem,2vw,1.55rem);font-weight:700
+    }
+    .hero-description{max-width:650px;color:#afc0d5;margin-bottom:34px}
+    .hero-buttons,.hero-social-links{display:flex;gap:13px;flex-wrap:wrap}
+    .hero-buttons{margin-bottom:28px}
+    .primary-button,.secondary-button{
+      min-height:49px;padding:0 20px;display:inline-flex;
+      align-items:center;justify-content:center;gap:10px;
+      border-radius:11px;font-size:.9rem;font-weight:800;transition:.3s
+    }
+    .primary-button{
+      color:var(--bg);
+      background:linear-gradient(135deg,var(--primary2),var(--primary));
+      box-shadow:0 14px 34px rgba(101,181,255,.18)
+    }
+    .secondary-button{
+      color:#fff;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.16)
+    }
+    .primary-button:hover,.secondary-button:hover{transform:translateY(-3px)}
+    .social-link{
+      display:inline-flex;align-items:center;gap:9px;
+      color:#b8c7d9;font-size:.84rem;font-weight:700
+    }
+    .social-link:hover{color:var(--primary)}
+    .profile-wrapper{display:flex;justify-content:center}
+    .profile-card{
+      width:min(100%,420px);padding:16px;
+      background:rgba(255,255,255,.075);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:32px;box-shadow:var(--shadowDark)
+    }
+    .profile-image{
+      width:100%;height:485px;object-fit:cover;
+      object-position:center 20%;border-radius:22px;background:#0d2038
+    }
+    .profile-placeholder{
+      min-height:485px;display:grid;place-items:center;
+      padding:30px;text-align:center;color:var(--muted2);
+      border:1px dashed rgba(255,255,255,.22);border-radius:22px;
+      background:linear-gradient(145deg,rgba(37,99,235,.2),rgba(7,24,43,.95))
+    }
+    .profile-placeholder i{
+      display:block;color:var(--primary);font-size:3.4rem;margin-bottom:14px
+    }
+
+    .statistics{position:relative;z-index:10;margin-top:-58px}
+    .statistics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .stat-card{
+      min-height:160px;padding:27px;display:flex;
+      flex-direction:column;justify-content:space-between;
+      background:#fff;border:1px solid var(--border);
+      border-radius:18px;box-shadow:var(--shadow);transition:.3s
+    }
+    .stat-card:hover{transform:translateY(-8px);border-color:#bcd5f7}
+    .stat-icon{
+      width:42px;height:42px;display:grid;place-items:center;
+      color:#2563eb;background:var(--lightblue);border-radius:11px
+    }
+    .stat-number{
+      margin-top:15px;color:var(--bg2);font-size:2.1rem;
+      line-height:1;font-weight:800
+    }
+    .stat-text{color:var(--muted);font-size:.84rem;font-weight:700}
+
+    .about-grid{
+      display:grid;grid-template-columns:1.1fr .9fr;
+      gap:65px;align-items:start
+    }
+    .about-content p{margin-bottom:18px;color:var(--muted)}
+    .about-content p:first-of-type{color:var(--dark);font-size:1.1rem;font-weight:600}
+    .about-highlight{
+      margin-top:30px;padding:24px;display:flex;gap:18px;
+      background:var(--lightblue);border-left:4px solid #2563eb;
+      border-radius:0 12px 12px 0
+    }
+    .about-highlight i{color:#2563eb;font-size:1.4rem;margin-top:4px}
+    .profile-information-card{
+      padding:34px;color:#fff;
+      background:linear-gradient(145deg,var(--bg2),#102944);
+      border-radius:28px;box-shadow:var(--shadow)
+    }
+    .profile-information-card h3{margin-bottom:25px;font-size:1.45rem}
+    .profile-information-list{display:grid;gap:19px}
+    .profile-information-item{
+      display:grid;grid-template-columns:42px 1fr;gap:14px
+    }
+    .profile-information-icon{
+      width:42px;height:42px;display:grid;place-items:center;
+      color:var(--primary);background:rgba(59,130,246,.12);border-radius:11px
+    }
+    .profile-information-item small{
+      display:block;color:#90a5bd;font-size:.72rem;
+      text-transform:uppercase;letter-spacing:.08em
+    }
+    .profile-information-item strong{font-size:.9rem}
+
+    .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .skill-category{
+      padding:30px;background:#fff;border:1px solid var(--border);
+      border-radius:18px;transition:.3s
+    }
+    .skill-category:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+    .skill-category-icon{
+      width:50px;height:50px;display:grid;place-items:center;
+      color:#2563eb;background:var(--lightblue);
+      border-radius:13px;font-size:1.25rem;margin-bottom:20px
+    }
+    .skill-category h3{margin-bottom:15px}
+    .skill-tags,.modal-skill-tags{display:flex;flex-wrap:wrap;gap:8px}
+    .skill-tag{
+      padding:7px 10px;color:#3e536c;background:#f3f7fb;
+      border:1px solid #e3ebf4;border-radius:8px;
+      font-size:.76rem;font-weight:700
+    }
+
+    .expertise-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+    .expertise-card{
+      padding:28px;display:flex;gap:18px;
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:18px;transition:.3s
+    }
+    .expertise-card:hover{
+      transform:translateY(-6px);background:rgba(255,255,255,.085)
+    }
+    .expertise-icon{
+      flex:0 0 48px;width:48px;height:48px;
+      display:grid;place-items:center;color:var(--primary);
+      background:rgba(59,130,246,.12);border-radius:13px
+    }
+    .expertise-card h3{margin-bottom:7px}
+    .expertise-card p{color:var(--muted2);font-size:.86rem}
+
+    .experience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .experience-card{
+      min-height:330px;padding:30px;display:flex;flex-direction:column;
+      background:#fff;border:1px solid var(--border);
+      border-radius:18px;transition:.3s
+    }
+    .experience-card:hover{transform:translateY(-8px);box-shadow:var(--shadow)}
+    .experience-card-header{
+      display:flex;justify-content:space-between;align-items:flex-start;
+      gap:15px;margin-bottom:28px
+    }
+    .company-icon{
+      width:50px;height:50px;display:grid;place-items:center;
+      color:#2563eb;background:var(--lightblue);
+      border-radius:14px;font-size:1.3rem
+    }
+    .experience-year{
+      padding:6px 9px;color:#2563eb;background:var(--lightblue);
+      border-radius:7px;font-size:.72rem;font-weight:800
+    }
+    .experience-role{
+      margin:7px 0 17px;color:#2563eb;
+      font-size:.87rem;font-weight:800
+    }
+    .experience-summary{
+      margin-bottom:25px;color:var(--muted);font-size:.87rem
+    }
+    .view-details-button{
+      margin-top:auto;display:inline-flex;align-items:center;gap:9px;
+      border:0;color:var(--dark);background:transparent;font-weight:800
+    }
+    .view-details-button:hover{color:#2563eb}
+
+    .project-placeholder{
+      min-height:390px;padding:55px;display:grid;place-items:center;
+      text-align:center;
+      background:linear-gradient(145deg,rgba(37,99,235,.11),rgba(34,211,238,.05));
+      border:1px dashed #abc8ed;border-radius:28px
+    }
+    .project-placeholder-content{max-width:610px}
+    .project-placeholder-icon{
+      width:78px;height:78px;margin:0 auto 22px;
+      display:grid;place-items:center;color:#2563eb;
+      background:#fff;border-radius:22px;box-shadow:var(--shadow);font-size:2rem
+    }
+    .project-placeholder h3{margin-bottom:14px;font-size:1.8rem}
+    .project-placeholder p{color:var(--muted)}
+
+    .research-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .research-card{
+      padding:32px;background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:18px;transition:.3s
+    }
+    .research-card:hover{transform:translateY(-7px)}
+    .research-type{
+      display:inline-block;margin-bottom:20px;padding:7px 10px;
+      color:var(--primary);background:rgba(59,130,246,.12);
+      border-radius:7px;font-size:.72rem;font-weight:800;
+      text-transform:uppercase;letter-spacing:.06em
+    }
+    .research-card h3{margin-bottom:14px;line-height:1.4}
+    .research-card p{margin-bottom:22px;color:var(--muted2);font-size:.88rem}
+    .research-link{color:var(--primary);font-size:.85rem;font-weight:800}
+
+    .contact-grid{
+      display:grid;grid-template-columns:.85fr 1.15fr;
+      gap:55px;align-items:start
+    }
+    .contact-content p{margin-bottom:30px;color:var(--muted)}
+    .contact-list{display:grid;gap:15px}
+    .contact-item{
+      padding:17px;display:flex;align-items:center;gap:14px;
+      background:#fff;border:1px solid var(--border);border-radius:13px
+    }
+    .contact-icon{
+      width:42px;height:42px;display:grid;place-items:center;
+      color:#2563eb;background:var(--lightblue);border-radius:11px
+    }
+    .contact-item small{display:block;color:var(--muted);font-size:.72rem}
+    .contact-card{
+      padding:38px;color:#fff;
+      background:linear-gradient(145deg,var(--bg2),#102944);
+      border-radius:28px;box-shadow:var(--shadow)
+    }
+    .contact-card p{margin:12px 0 25px;color:var(--muted2)}
+    .contact-actions{display:flex;flex-wrap:wrap;gap:12px}
+
+    .footer{
+      padding:30px 0;color:#9dafc3;background:#030b15;
+      border-top:1px solid rgba(255,255,255,.07)
+    }
+    .footer-content{
+      display:flex;justify-content:space-between;
+      align-items:center;gap:25px
+    }
+    .footer p{font-size:.8rem}
+    .footer-links{display:flex;gap:17px}
+    .footer-links a:hover{color:var(--primary)}
+
+    .modal-overlay{
+      position:fixed;inset:0;z-index:2000;padding:25px;
+      display:none;align-items:center;justify-content:center;
+      background:rgba(2,8,16,.8);backdrop-filter:blur(12px)
+    }
+    .modal-overlay.show{display:flex}
+    .modal{
+      position:relative;width:min(680px,100%);max-height:90vh;
+      overflow:auto;padding:40px;background:#fff;
+      border-radius:24px;box-shadow:var(--shadowDark)
+    }
+    .modal-close{
+      position:absolute;top:18px;right:18px;width:42px;height:42px;
+      display:grid;place-items:center;border:1px solid var(--border);
+      border-radius:10px;background:var(--light)
+    }
+    .modal-company-icon{
+      width:58px;height:58px;margin-bottom:22px;
+      display:grid;place-items:center;color:#2563eb;
+      background:var(--lightblue);border-radius:16px;font-size:1.5rem
+    }
+    .modal h2{padding-right:45px}
+    .modal-role{margin-bottom:28px;color:#2563eb;font-weight:800}
+    .modal-information-grid{
+      margin-bottom:28px;display:grid;
+      grid-template-columns:repeat(2,1fr);gap:13px
+    }
+    .modal-information-item{
+      padding:15px;background:var(--light);
+      border:1px solid var(--border);border-radius:11px
+    }
+    .modal-information-item small{
+      display:block;color:var(--muted);font-size:.7rem;
+      text-transform:uppercase;letter-spacing:.06em
+    }
+    .modal-description p{margin:10px 0 23px;color:var(--muted)}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:.7s}
+    .reveal.visible{opacity:1;transform:none}
+
+    @media(max-width:1000px){
+      .hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr}
+      .profile-wrapper{max-width:470px;margin:auto}
+      .statistics-grid{grid-template-columns:repeat(2,1fr)}
+      .skills-grid,.experience-grid{grid-template-columns:repeat(2,1fr)}
+      .experience-card:last-child{grid-column:span 2}
+    }
+
+    @media(max-width:820px){
+      .mobile-menu-button{display:grid;place-items:center}
+      .nav-links{
+        position:absolute;top:76px;left:0;width:100%;
+        padding:25px;display:none;flex-direction:column;
+        align-items:flex-start;background:rgba(6,17,31,.98)
+      }
+      .nav-links.show{display:flex}
+      .nav-contact{width:100%;text-align:center}
+      .expertise-grid,.research-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:650px){
+      .container{width:min(100% - 28px,1160px)}
+      .section{padding:75px 0}
+      .hero{min-height:auto;padding:125px 0 100px}
+      .hero-title{font-size:clamp(3rem,17vw,4.8rem)}
+      .statistics{margin-top:-40px}
+      .statistics-grid,.skills-grid,.experience-grid{grid-template-columns:1fr}
+      .experience-card:last-child{grid-column:auto}
+      .profile-image,.profile-placeholder{height:420px;min-height:420px}
+      .modal-information-grid{grid-template-columns:1fr}
+      .footer-content{flex-direction:column;text-align:center}
+    }
+  </style>
 </head>
 
 <body>
+  <header class="navbar">
+    <div class="container nav-container">
+      <a class="logo" href="#home">Raj<span>Patel</span></a>
 
-    <!-- =====================================================
-         NAVIGATION
-    ====================================================== -->
+      <button class="mobile-menu-button" id="mobileMenuButton" aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
 
-    <header class="navbar">
-        <div class="container nav-container">
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#expertise">Expertise</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#research">Research</a></li>
+          <li><a class="nav-contact" href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-            <a class="logo" href="#home">
-                Raj<span>Patel</span>
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="availability-badge">
+            <span class="availability-dot"></span>
+            Melbourne, Australia · Open to Aerospace Opportunities
+          </div>
+
+          <h1 class="hero-title">Raj <span>Patel</span></h1>
+          <p class="hero-role">Aerospace Engineering Postgraduate</p>
+
+          <p class="hero-description">
+            Aerospace engineering postgraduate specialising in UAV systems,
+            aircraft design, aerodynamics and propulsion. I apply engineering
+            analysis, research and practical design methods to develop efficient,
+            reliable and mission-focused aerospace systems.
+          </p>
+
+          <div class="hero-buttons">
+            <a class="primary-button" href="#projects">
+              Explore My Work <i class="fa-solid fa-arrow-right"></i>
             </a>
 
-            <button
-                class="mobile-menu-button"
-                id="mobileMenuButton"
-                aria-label="Open navigation menu"
-            >
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <a class="secondary-button" href="resume/Raj_Patel_Resume.pdf" target="_blank">
+              <i class="fa-solid fa-file-arrow-down"></i> View Résumé
+            </a>
+          </div>
 
-            <nav>
-                <ul class="nav-links" id="navLinks">
+          <div class="hero-social-links">
+            <a class="social-link" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">
+              <i class="fa-brands fa-linkedin"></i> LinkedIn
+            </a>
 
-                    <li>
-                        <a href="#about">About</a>
-                    </li>
+            <a class="social-link" href="https://github.com/rajpatel-aero" target="_blank">
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
 
-                    <li>
-                        <a href="#expertise">Expertise</a>
-                    </li>
-
-                    <li>
-                        <a href="#projects">Projects</a>
-                    </li>
-
-                    <li>
-                        <a href="#experience">Experience</a>
-                    </li>
-
-                    <li>
-                        <a href="#research">Research</a>
-                    </li>
-
-                    <li>
-                        <a
-                            class="nav-contact"
-                            href="#contact"
-                        >
-                            Contact
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
-
+            <a class="social-link" href="https://orcid.org/0009-0000-7886-2864" target="_blank">
+              <i class="fa-brands fa-orcid"></i> ORCID
+            </a>
+          </div>
         </div>
-    </header>
 
+        <div class="profile-wrapper">
+          <div class="profile-card">
 
-    <!-- =====================================================
-         HERO SECTION
-    ====================================================== -->
-
-    <main>
-
-        <section class="hero" id="home">
-            <div class="container hero-grid">
-
-                <div class="hero-content">
-
-                    <div class="availability-badge">
-                        <span class="availability-dot"></span>
-
-                        Melbourne, Australia · Open to Aerospace Opportunities
-                    </div>
-
-                    <h1 class="hero-title">
-                        Raj
-                        <span>Patel</span>
-                    </h1>
-
-                    <p class="hero-role">
-                        Aerospace Engineering Postgraduate
-                    </p>
-
-                    <p class="hero-description">
-                        Aerospace engineering postgraduate specialising in
-                        UAV systems, aircraft design, aerodynamics and
-                        propulsion. I apply engineering analysis, research
-                        and practical design methods to develop efficient,
-                        reliable and mission-focused aerospace systems.
-                    </p>
-
-                    <div class="hero-buttons">
-
-                        <a
-                            class="primary-button"
-                            href="#projects"
-                        >
-                            Explore My Work
-
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-
-                        <!-- Replace # with your resume PDF location -->
-                        <a
-                            class="secondary-button"
-                            href="#"
-                            target="_blank"
-                        >
-                            <i class="fa-solid fa-file-arrow-down"></i>
-
-                            View Résumé
-                        </a>
-
-                    </div>
-
-                    <div class="hero-social-links">
-
-                        <!-- Replace # with your LinkedIn URL -->
-                        <a
-                            class="social-link"
-                            href="#"
-                            target="_blank"
-                        >
-                            <i class="fa-brands fa-linkedin"></i>
-                            LinkedIn
-                        </a>
-
-                        <!-- Replace # with your GitHub URL -->
-                        <a
-                            class="social-link"
-                            href="#"
-                            target="_blank"
-                        >
-                            <i class="fa-brands fa-github"></i>
-                            GitHub
-                        </a>
-
-                        <!-- Replace # with your ORCID URL -->
-                        <a
-                            class="social-link"
-                            href="#"
-                            target="_blank"
-                        >
-                            <i class="fa-brands fa-orcid"></i>
-                            ORCID
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <div class="profile-wrapper">
-
-                    <div class="profile-card">
-
-                        <div class="profile-image-placeholder">
-
-                            <i class="fa-regular fa-image"></i>
-
-                            <strong>Profile Image</strong>
-
-                            <span>
-                                Your professional aerospace image will
-                                appear here.
-                            </span>
-
-                        </div>
-
-                        <!--
-                        WHEN YOU HAVE YOUR IMAGE:
-
-                        Delete the profile-image-placeholder div above.
-
-                        Then use this:
-
-                        <img
-                            class="profile-image"
-                            src="images/profile.jpg"
-                            alt="Raj Patel - Aerospace Engineer"
-                        >
-                        -->
-
-                    </div>
-
-                    <div class="floating-card">
-
-                        <div class="floating-card-icon">
-                            <i class="fa-solid fa-plane"></i>
-                        </div>
-
-                        <div>
-                            <small>Current Focus</small>
-                            <strong>UAV Systems & Aircraft Design</strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <!-- Replace this placeholder after uploading your photo -->
+            <div class="profile-placeholder">
+              <div>
+                <i class="fa-regular fa-image"></i>
+                <strong>Professional Profile Image</strong>
+                <p>Upload your image as images/raj-patel-profile.jpg</p>
+              </div>
             </div>
-        </section>
 
-
-        <!-- =====================================================
-             STATISTICS
-        ====================================================== -->
-
-        <section class="statistics">
-            <div class="container statistics-grid">
-
-                <article class="stat-card reveal">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-diagram-project"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="stat-number">9+</h2>
-                        <p class="stat-text">Engineering Projects</p>
-                    </div>
-
-                </article>
-
-
-                <article class="stat-card reveal">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-plane-up"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="stat-number">7+</h2>
-                        <p class="stat-text">Aerospace Projects</p>
-                    </div>
-
-                </article>
-
-
-                <article class="stat-card reveal">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-book-open"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="stat-number">2</h2>
-                        <p class="stat-text">Published Research Studies</p>
-                    </div>
-
-                </article>
-
-
-                <article class="stat-card reveal">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-trophy"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="stat-number">2</h2>
-                        <p class="stat-text">
-                            National & International Competitions
-                        </p>
-                    </div>
-
-                </article>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             ABOUT
-        ====================================================== -->
-
-        <section class="section section-white" id="about">
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">About Me</span>
-
-                    <h2 class="section-title">
-                        Designing aerospace systems with purpose.
-                    </h2>
-
-                </div>
-
-
-                <div class="about-grid">
-
-                    <div class="about-content reveal">
-
-                        <p>
-                            I am currently completing a Master of Engineering
-                            in Aerospace Engineering at RMIT University in
-                            Melbourne.
-                        </p>
-
-                        <p>
-                            My academic and project experience includes
-                            aircraft design, aerodynamic analysis, UAV system
-                            development, propulsion selection, stability and
-                            control, computational analysis and engineering
-                            research.
-                        </p>
-
-                        <p>
-                            I enjoy transforming mission requirements into
-                            practical engineering decisions. My work combines
-                            theoretical analysis with tools such as MATLAB,
-                            Python, XFLR5, ANSYS, SolidWorks and CATIA.
-                        </p>
-
-                        <p>
-                            I am especially interested in UAV development,
-                            aircraft performance, propulsion integration,
-                            aerodynamic optimisation and future aviation
-                            technologies.
-                        </p>
-
-                        <div class="about-highlight">
-
-                            <i class="fa-solid fa-bullseye"></i>
-
-                            <div>
-                                <strong>Career Objective</strong>
-
-                                <p>
-                                    To contribute to an aerospace organisation
-                                    where I can apply engineering analysis,
-                                    practical design skills and research
-                                    experience to meaningful aviation projects.
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <aside class="profile-information-card reveal">
-
-                        <h3>Professional Profile</h3>
-
-                        <div class="profile-information-list">
-
-                            <div class="profile-information-item">
-
-                                <div class="profile-information-icon">
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                </div>
-
-                                <div>
-                                    <small>Current Degree</small>
-
-                                    <strong>
-                                        Master of Engineering
-                                        (Aerospace Engineering)
-                                    </strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="profile-information-item">
-
-                                <div class="profile-information-icon">
-                                    <i class="fa-solid fa-building-columns"></i>
-                                </div>
-
-                                <div>
-                                    <small>University</small>
-                                    <strong>RMIT University</strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="profile-information-item">
-
-                                <div class="profile-information-icon">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                </div>
-
-                                <div>
-                                    <small>Location</small>
-                                    <strong>Melbourne, Australia</strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="profile-information-item">
-
-                                <div class="profile-information-icon">
-                                    <i class="fa-solid fa-calendar-check"></i>
-                                </div>
-
-                                <div>
-                                    <small>Expected Graduation</small>
-                                    <strong>December 2026</strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="profile-information-item">
-
-                                <div class="profile-information-icon">
-                                    <i class="fa-solid fa-compass-drafting"></i>
-                                </div>
-
-                                <div>
-                                    <small>Primary Interests</small>
-
-                                    <strong>
-                                        UAVs, Aircraft Design, Aerodynamics
-                                        and Propulsion
-                                    </strong>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </aside>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             SKILLS
-        ====================================================== -->
-
-        <section class="section section-light" id="skills">
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">Skills</span>
-
-                    <h2 class="section-title">
-                        Tools and engineering capabilities.
-                    </h2>
-
-                    <p class="section-description">
-                        A combination of aerospace engineering knowledge,
-                        numerical analysis, design software and research
-                        experience.
-                    </p>
-
-                </div>
-
-
-                <div class="skills-grid">
-
-                    <article class="skill-category reveal">
-
-                        <div class="skill-category-icon">
-                            <i class="fa-solid fa-plane"></i>
-                        </div>
-
-                        <h3>Aerospace Engineering</h3>
-
-                        <div class="skill-tags">
-                            <span class="skill-tag">Aircraft Design</span>
-                            <span class="skill-tag">UAV Systems</span>
-                            <span class="skill-tag">Aerodynamics</span>
-                            <span class="skill-tag">Propulsion</span>
-                            <span class="skill-tag">Flight Performance</span>
-                            <span class="skill-tag">Stability & Control</span>
-                        </div>
-
-                    </article>
-
-
-                    <article class="skill-category reveal">
-
-                        <div class="skill-category-icon">
-                            <i class="fa-solid fa-cube"></i>
-                        </div>
-
-                        <h3>CAD and Simulation</h3>
-
-                        <div class="skill-tags">
-                            <span class="skill-tag">SolidWorks</span>
-                            <span class="skill-tag">CATIA</span>
-                            <span class="skill-tag">ANSYS Fluent</span>
-                            <span class="skill-tag">XFLR5</span>
-                            <span class="skill-tag">CFD</span>
-                            <span class="skill-tag">3D Modelling</span>
-                        </div>
-
-                    </article>
-
-
-                    <article class="skill-category reveal">
-
-                        <div class="skill-category-icon">
-                            <i class="fa-solid fa-code"></i>
-                        </div>
-
-                        <h3>Analysis and Programming</h3>
-
-                        <div class="skill-tags">
-                            <span class="skill-tag">MATLAB</span>
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">Engineering Analysis</span>
-                            <span class="skill-tag">Data Visualisation</span>
-                            <span class="skill-tag">Technical Reporting</span>
-                            <span class="skill-tag">Research</span>
-                        </div>
-
-                    </article>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             ENGINEERING EXPERTISE
-        ====================================================== -->
-
-        <section class="section section-dark" id="expertise">
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">Engineering Expertise</span>
-
-                    <h2 class="section-title">
-                        Technical capability across the aircraft design cycle.
-                    </h2>
-
-                    <p class="section-description">
-                        From early mission requirements and concept development
-                        through analysis, component integration and technical
-                        validation.
-                    </p>
-
-                </div>
-
-
-                <div class="expertise-grid">
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-drafting-compass"></i>
-                        </div>
-
-                        <div>
-                            <h3>Aircraft Conceptual Design</h3>
-
-                            <p>
-                                Translating mission requirements into aircraft
-                                configurations, geometry, sizing decisions and
-                                preliminary system layouts.
-                            </p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-wind"></i>
-                        </div>
-
-                        <div>
-                            <h3>Aerodynamic Analysis</h3>
-
-                            <p>
-                                Evaluating lift, drag, airfoil behaviour,
-                                Reynolds-number effects and aircraft
-                                performance using analytical and numerical
-                                methods.
-                            </p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-gauge-high"></i>
-                        </div>
-
-                        <div>
-                            <h3>Propulsion Integration</h3>
-
-                            <p>
-                                Assessing thrust requirements, engine options,
-                                fuel consumption, installation constraints and
-                                propulsion-system compatibility.
-                            </p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-scale-balanced"></i>
-                        </div>
-
-                        <div>
-                            <h3>Mass, CG and Stability</h3>
-
-                            <p>
-                                Component-placement planning, moment
-                                calculations, centre-of-gravity estimation and
-                                static-stability assessment.
-                            </p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-laptop-code"></i>
-                        </div>
-
-                        <div>
-                            <h3>Computational Engineering</h3>
-
-                            <p>
-                                Applying MATLAB, Python, ANSYS and XFLR5 for
-                                numerical analysis, simulation, optimisation
-                                and technical decision-making.
-                            </p>
-                        </div>
-
-                    </article>
-
-
-                    <article class="expertise-card reveal">
-
-                        <div class="expertise-icon">
-                            <i class="fa-solid fa-microscope"></i>
-                        </div>
-
-                        <div>
-                            <h3>Engineering Research</h3>
-
-                            <p>
-                                Literature review, research methodology,
-                                technical documentation, result interpretation
-                                and publication-focused engineering studies.
-                            </p>
-                        </div>
-
-                    </article>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             WORK EXPERIENCE
-        ====================================================== -->
-
-        <section
-            class="section section-white"
-            id="experience"
-        >
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">Work Experience</span>
-
-                    <h2 class="section-title">
-                        Professional and practical experience.
-                    </h2>
-
-                    <p class="section-description">
-                        Select an experience card to view the position,
-                        duration, responsibilities and skills in more detail.
-                    </p>
-
-                </div>
-
-
-                <div class="experience-grid">
-
-                    <article class="experience-card reveal">
-
-                        <div class="experience-card-header">
-
-                            <div class="company-icon">
-                                <i class="fa-solid fa-plane-circle-check"></i>
-                            </div>
-
-                            <span class="experience-year">
-                                Internship
-                            </span>
-
-                        </div>
-
-                        <h3>Soaron Aerospace Innovation</h3>
-
-                        <p class="experience-role">
-                            Aerospace Engineering Intern
-                        </p>
-
-                        <p class="experience-summary">
-                            Supported engineering activities involving drone
-                            airframe analysis, structural concepts and robotic
-                            system calculations.
-                        </p>
-
-                        <button
-                            class="view-details-button"
-                            data-experience="soaron"
-                        >
-                            View experience
-
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-
-                    </article>
-
-
-                    <article class="experience-card reveal">
-
-                        <div class="experience-card-header">
-
-                            <div class="company-icon">
-                                <i class="fa-solid fa-chart-line"></i>
-                            </div>
-
-                            <span class="experience-year">
-                                Experience
-                            </span>
-
-                        </div>
-
-                        <h3>Techcurators India</h3>
-
-                        <p class="experience-role">
-                            Team Member
-                        </p>
-
-                        <p class="experience-summary">
-                            Professional experience supporting team operations,
-                            coordination, communication and task delivery.
-                        </p>
-
-                        <button
-                            class="view-details-button"
-                            data-experience="techcurators"
-                        >
-                            View experience
-
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-
-                    </article>
-
-
-                    <article class="experience-card reveal">
-
-                        <div class="experience-card-header">
-
-                            <div class="company-icon">
-                                <i class="fa-solid fa-store"></i>
-                            </div>
-
-                            <span class="experience-year">
-                                2025–Present
-                            </span>
-
-                        </div>
-
-                        <h3>Ampol Retail Services</h3>
-
-                        <p class="experience-role">
-                            Retail Team Member
-                        </p>
-
-                        <p class="experience-summary">
-                            Customer-facing role requiring teamwork,
-                            communication, responsibility and efficient
-                            service in a fast-paced environment.
-                        </p>
-
-                        <button
-                            class="view-details-button"
-                            data-experience="ampol"
-                        >
-                            View experience
-
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-
-                    </article>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             PROJECTS PLACEHOLDER
-        ====================================================== -->
-
-        <section
-            class="section section-light"
-            id="projects"
-        >
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">Projects</span>
-
-                    <h2 class="section-title">
-                        Aerospace and engineering projects.
-                    </h2>
-
-                    <p class="section-description">
-                        This section will contain your nine project cards.
-                        Each card will open a dedicated project detail view.
-                    </p>
-
-                </div>
-
-
-                <div class="project-placeholder reveal">
-
-                    <div class="project-placeholder-content">
-
-                        <div class="project-placeholder-icon">
-                            <i class="fa-solid fa-rocket"></i>
-                        </div>
-
-                        <h3>Project section ready for your content</h3>
-
-                        <p>
-                            After you review this homepage design, we will add
-                            your Jet-Propelled UAS, aerodynamic design,
-                            research, competition and RC-aircraft projects in
-                            the same professional format.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             RESEARCH
-        ====================================================== -->
-
-        <section
-            class="section section-dark"
-            id="research"
-        >
-            <div class="container">
-
-                <div class="section-heading reveal">
-
-                    <span class="section-label">Research</span>
-
-                    <h2 class="section-title">
-                        Published aerospace research.
-                    </h2>
-
-                    <p class="section-description">
-                        Research addressing aerodynamic efficiency and
-                        intelligent aircraft-system diagnostics.
-                    </p>
-
-                </div>
-
-
-                <div class="research-grid">
-
-                    <article class="research-card reveal">
-
-                        <span class="research-type">
-                            Published Research
-                        </span>
-
-                        <h3>
-                            Effect of Vertical Canard Location on Aircraft
-                            Aerodynamic Performance
-                        </h3>
-
-                        <p>
-                            Investigation of three canard positions and their
-                            influence on aircraft aerodynamic behaviour,
-                            efficiency and environmentally focused design.
-                        </p>
-
-                        <!-- Replace # with publication URL -->
-                        <a
-                            class="research-link"
-                            href="#"
-                            target="_blank"
-                        >
-                            View publication
-
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-
-                    </article>
-
-
-                    <article class="research-card reveal">
-
-                        <span class="research-type">
-                            Published Research
-                        </span>
-
-                        <h3>
-                            AI-Based Aircraft Fault Detection and Diagnostics
-                        </h3>
-
-                        <p>
-                            Research exploring artificial-intelligence methods
-                            for identifying aircraft faults and supporting
-                            effective diagnostic decision-making.
-                        </p>
-
-                        <!-- Replace # with publication URL -->
-                        <a
-                            class="research-link"
-                            href="#"
-                            target="_blank"
-                        >
-                            View publication
-
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
-
-                    </article>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- =====================================================
-             CONTACT
-        ====================================================== -->
-
-        <section
-            class="section section-white"
-            id="contact"
-        >
-            <div class="container">
-
-                <div class="contact-grid">
-
-                    <div class="contact-content reveal">
-
-                        <span class="section-label">Contact</span>
-
-                        <h2 class="section-title">
-                            Let’s connect.
-                        </h2>
-
-                        <p>
-                            I am open to graduate engineering roles,
-                            internships, research collaboration and aerospace
-                            opportunities in Australia.
-                        </p>
-
-                        <div class="contact-list">
-
-                            <div class="contact-item">
-
-                                <div class="contact-icon">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                </div>
-
-                                <div>
-                                    <small>Location</small>
-                                    <strong>Melbourne, Australia</strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="contact-item">
-
-                                <div class="contact-icon">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </div>
-
-                                <div>
-                                    <small>Email</small>
-                                    <strong>your.email@example.com</strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="contact-item">
-
-                                <div class="contact-icon">
-                                    <i class="fa-brands fa-linkedin"></i>
-                                </div>
-
-                                <div>
-                                    <small>LinkedIn</small>
-                                    <strong>linkedin.com/in/yourprofile</strong>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="contact-card reveal">
-
-                        <h3>Interested in working together?</h3>
-
-                        <p>
-                            Please feel free to contact me regarding aerospace
-                            engineering opportunities, graduate roles,
-                            technical projects or research collaboration.
-                        </p>
-
-                        <div class="contact-actions">
-
-                            <!-- Replace email address -->
-                            <a
-                                class="primary-button"
-                                href="mailto:your.email@example.com"
-                            >
-                                <i class="fa-solid fa-envelope"></i>
-
-                                Send Email
-                            </a>
-
-                            <!-- Replace # with LinkedIn URL -->
-                            <a
-                                class="secondary-button"
-                                href="#"
-                                target="_blank"
-                            >
-                                <i class="fa-brands fa-linkedin"></i>
-
-                                LinkedIn
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-
-    <footer class="footer">
-        <div class="container footer-content">
+            <!-- Then use this:
+            <img
+              class="profile-image"
+              src="images/raj-patel-profile.jpg"
+              alt="Raj Patel"
+            >
+            -->
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="statistics">
+      <div class="container statistics-grid">
+        <article class="stat-card reveal">
+          <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div>
+            <h2 class="stat-number">2</h2>
+            <p class="stat-text">Aerospace Engineering Degrees</p>
+          </div>
+        </article>
+
+        <article class="stat-card reveal">
+          <div class="stat-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <div>
+            <h2 class="stat-number">7+</h2>
+            <p class="stat-text">Engineering Projects</p>
+          </div>
+        </article>
+
+        <article class="stat-card reveal">
+          <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
+          <div>
+            <h2 class="stat-number">2</h2>
+            <p class="stat-text">Published Research Studies</p>
+          </div>
+        </article>
+
+        <article class="stat-card reveal">
+          <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+          <div>
+            <h2 class="stat-number">2</h2>
+            <p class="stat-text">National & International Competitions</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-white" id="about">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">About Me</span>
+          <h2 class="section-title">Designing aerospace systems with purpose.</h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-content reveal">
+            <p>
+              I am currently completing a Master of Engineering in Aerospace
+              Engineering at RMIT University in Melbourne.
+            </p>
 
             <p>
-                © <span id="currentYear"></span> Raj Patel.
-                Aerospace Engineering Portfolio.
+              My academic and project experience includes aircraft design,
+              aerodynamic analysis, UAV-system development, propulsion selection,
+              stability and control, computational analysis and engineering research.
             </p>
 
-            <div class="footer-links">
-
-                <a
-                    href="#"
-                    aria-label="LinkedIn"
-                >
-                    <i class="fa-brands fa-linkedin"></i>
-                </a>
-
-                <a
-                    href="#"
-                    aria-label="GitHub"
-                >
-                    <i class="fa-brands fa-github"></i>
-                </a>
-
-                <a
-                    href="#"
-                    aria-label="ORCID"
-                >
-                    <i class="fa-brands fa-orcid"></i>
-                </a>
-
-            </div>
-
-        </div>
-    </footer>
-
-
-    <!-- =====================================================
-         EXPERIENCE MODAL
-    ====================================================== -->
-
-    <div
-        class="modal-overlay"
-        id="experienceModalOverlay"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalCompany"
-    >
-
-        <div class="modal">
-
-            <button
-                class="modal-close"
-                id="modalClose"
-                aria-label="Close experience details"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="modal-company-icon">
-                <i
-                    class="fa-solid fa-briefcase"
-                    id="modalIcon"
-                ></i>
-            </div>
-
-            <h2 id="modalCompany">
-                Company Name
-            </h2>
-
-            <p
-                class="modal-role"
-                id="modalRole"
-            >
-                Position
+            <p>
+              I enjoy transforming mission requirements into practical engineering
+              decisions. My work combines theoretical analysis with tools such as
+              MATLAB, Python, XFLR5, ANSYS, SolidWorks and CATIA.
             </p>
 
-
-            <div class="modal-information-grid">
-
-                <div class="modal-information-item">
-                    <small>Employment Type</small>
-                    <strong id="modalEmploymentType">—</strong>
-                </div>
-
-                <div class="modal-information-item">
-                    <small>Location Type</small>
-                    <strong id="modalLocationType">—</strong>
-                </div>
-
-                <div class="modal-information-item">
-                    <small>Duration</small>
-                    <strong id="modalDuration">—</strong>
-                </div>
-
-                <div class="modal-information-item">
-                    <small>Industry</small>
-                    <strong id="modalIndustry">—</strong>
-                </div>
-
-            </div>
-
-
-            <div class="modal-description">
-
-                <h3>Role Description</h3>
-
-                <p id="modalDescription">
-                    Experience description will appear here.
+            <div class="about-highlight">
+              <i class="fa-solid fa-bullseye"></i>
+              <div>
+                <strong>Career Objective</strong>
+                <p>
+                  To contribute to an aerospace organisation where I can apply
+                  engineering analysis, practical design skills and research
+                  experience to meaningful aviation projects.
                 </p>
-
+              </div>
             </div>
+          </div>
 
+          <aside class="profile-information-card reveal">
+            <h3>Professional Profile</h3>
 
-            <div class="modal-skills">
+            <div class="profile-information-list">
+              <div class="profile-information-item">
+                <div class="profile-information-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div>
+                  <small>Current Degree</small>
+                  <strong>Master of Engineering (Aerospace Engineering)</strong>
+                </div>
+              </div>
 
-                <h3>Skills and Capabilities</h3>
+              <div class="profile-information-item">
+                <div class="profile-information-icon"><i class="fa-solid fa-building-columns"></i></div>
+                <div>
+                  <small>University</small>
+                  <strong>RMIT University</strong>
+                </div>
+              </div>
 
-                <div
-                    class="modal-skill-tags"
-                    id="modalSkills"
-                ></div>
+              <div class="profile-information-item">
+                <div class="profile-information-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                  <small>Location</small>
+                  <strong>Melbourne, Australia</strong>
+                </div>
+              </div>
 
+              <div class="profile-information-item">
+                <div class="profile-information-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <div>
+                  <small>Expected Graduation</small>
+                  <strong>December 2026</strong>
+                </div>
+              </div>
+
+              <div class="profile-information-item">
+                <div class="profile-information-icon"><i class="fa-solid fa-compass-drafting"></i></div>
+                <div>
+                  <small>Primary Interests</small>
+                  <strong>UAVs, Aircraft Design, Aerodynamics and Propulsion</strong>
+                </div>
+              </div>
             </div>
+          </aside>
+        </div>
+      </div>
+    </section>
 
+    <section class="section section-light" id="skills">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Skills</span>
+          <h2 class="section-title">Tools and engineering capabilities.</h2>
+          <p class="section-description">
+            Aerospace engineering knowledge, numerical analysis,
+            design software and research experience.
+          </p>
         </div>
 
+        <div class="skills-grid">
+          <article class="skill-category reveal">
+            <div class="skill-category-icon"><i class="fa-solid fa-plane"></i></div>
+            <h3>Aerospace Engineering</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Aircraft Design</span>
+              <span class="skill-tag">UAV Systems</span>
+              <span class="skill-tag">Aerodynamics</span>
+              <span class="skill-tag">Propulsion</span>
+              <span class="skill-tag">Flight Performance</span>
+              <span class="skill-tag">Stability & Control</span>
+            </div>
+          </article>
+
+          <article class="skill-category reveal">
+            <div class="skill-category-icon"><i class="fa-solid fa-cube"></i></div>
+            <h3>CAD and Simulation</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">SolidWorks</span>
+              <span class="skill-tag">CATIA</span>
+              <span class="skill-tag">ANSYS Fluent</span>
+              <span class="skill-tag">XFLR5</span>
+              <span class="skill-tag">CFD</span>
+              <span class="skill-tag">3D Modelling</span>
+            </div>
+          </article>
+
+          <article class="skill-category reveal">
+            <div class="skill-category-icon"><i class="fa-solid fa-code"></i></div>
+            <h3>Analysis and Programming</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">MATLAB</span>
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">Engineering Analysis</span>
+              <span class="skill-tag">Data Visualisation</span>
+              <span class="skill-tag">Technical Reporting</span>
+              <span class="skill-tag">Research</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="expertise">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Engineering Expertise</span>
+          <h2 class="section-title">Technical capability across the aircraft design cycle.</h2>
+        </div>
+
+        <div class="expertise-grid">
+          <article class="expertise-card reveal">
+            <div class="expertise-icon"><i class="fa-solid fa-drafting-compass"></i></div>
+            <div>
+              <h3>Aircraft Conceptual Design</h3>
+              <p>Mission requirements, configuration development, sizing and preliminary system layouts.</p>
+            </div>
+          </article>
+
+          <article class="expertise-card reveal">
+            <div class="expertise-icon"><i class="fa-solid fa-wind"></i></div>
+            <div>
+              <h3>Aerodynamic Analysis</h3>
+              <p>Lift, drag, airfoil behaviour and aircraft-performance evaluation.</p>
+            </div>
+          </article>
+
+          <article class="expertise-card reveal">
+            <div class="expertise-icon"><i class="fa-solid fa-gauge-high"></i></div>
+            <div>
+              <h3>Propulsion Integration</h3>
+              <p>Thrust requirements, engine options, fuel consumption and installation constraints.</p>
+            </div>
+          </article>
+
+          <article class="expertise-card reveal">
+            <div class="expertise-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div>
+              <h3>Mass, CG and Stability</h3>
+              <p>Component placement, moment calculations, CG estimation and stability assessment.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="experience">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Work Experience</span>
+          <h2 class="section-title">Professional and practical experience.</h2>
+          <p class="section-description">Click a card to view full experience details.</p>
+        </div>
+
+        <div class="experience-grid">
+          <article class="experience-card reveal">
+            <div class="experience-card-header">
+              <div class="company-icon"><i class="fa-solid fa-plane-circle-check"></i></div>
+              <span class="experience-year">Internship</span>
+            </div>
+            <h3>Soaron Aerospace Innovation</h3>
+            <p class="experience-role">Aerospace Engineering Intern</p>
+            <p class="experience-summary">
+              Drone-airframe analysis, structural concepts and robotic-system calculations.
+            </p>
+            <button class="view-details-button" data-experience="soaron">
+              View experience <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </article>
+
+          <article class="experience-card reveal">
+            <div class="experience-card-header">
+              <div class="company-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <span class="experience-year">Experience</span>
+            </div>
+            <h3>Techcurators India</h3>
+            <p class="experience-role">Team Member</p>
+            <p class="experience-summary">
+              Team operations, communication, coordination and task delivery.
+            </p>
+            <button class="view-details-button" data-experience="techcurators">
+              View experience <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </article>
+
+          <article class="experience-card reveal">
+            <div class="experience-card-header">
+              <div class="company-icon"><i class="fa-solid fa-store"></i></div>
+              <span class="experience-year">2025–Present</span>
+            </div>
+            <h3>Ampol Retail Services</h3>
+            <p class="experience-role">Retail Team Member</p>
+            <p class="experience-summary">
+              Customer service, teamwork and daily retail operations.
+            </p>
+            <button class="view-details-button" data-experience="ampol">
+              View experience <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-light" id="projects">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Projects</span>
+          <h2 class="section-title">Aerospace and engineering projects.</h2>
+          <p class="section-description">
+            This section is intentionally left as a placeholder until you approve
+            the homepage structure and send the final project architecture.
+          </p>
+        </div>
+
+        <div class="project-placeholder reveal">
+          <div class="project-placeholder-content">
+            <div class="project-placeholder-icon"><i class="fa-solid fa-rocket"></i></div>
+            <h3>Project section ready</h3>
+            <p>
+              The final version can include project cards, images, role,
+              tools, key outcomes and click-to-open project details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="research">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Research</span>
+          <h2 class="section-title">Published aerospace research.</h2>
+        </div>
+
+        <div class="research-grid">
+          <article class="research-card reveal">
+            <span class="research-type">Published Research</span>
+            <h3>Effect of Vertical location canard with three different locations to make Airplane Eco friendly</h3>
+            <p>Study of canard location, aerodynamic behaviour and aircraft efficiency.</p>
+            <a class="research-link" href="https://orcid.org/0009-0000-7886-2864" target="_blank">
+              View research profile
+            </a>
+          </article>
+
+          <article class="research-card reveal">
+            <span class="research-type">Published Research</span>
+            <h3>AI-Based Aircraft Fault Detection and Diagnostics</h3>
+            <p>AI, AR and VR technologies for aircraft maintenance and diagnostics.</p>
+            <a class="research-link" href="https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations" target="_blank">
+              View publication
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="contact">
+      <div class="container contact-grid">
+        <div class="contact-content reveal">
+          <span class="section-label">Contact</span>
+          <h2 class="section-title">Let’s connect.</h2>
+          <p>
+            I am open to graduate roles, internships, research collaboration
+            and aerospace opportunities in Australia.
+          </p>
+
+          <div class="contact-list">
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+              <div><small>Location</small><strong>Melbourne, Australia</strong></div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon"><i class="fa-brands fa-linkedin"></i></div>
+              <div><small>LinkedIn</small><strong>linkedin.com/in/rajpatel-aero04</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-card reveal">
+          <h3>Interested in discussing an aerospace opportunity?</h3>
+          <p>Please contact me regarding engineering roles, technical projects or research collaboration.</p>
+
+          <div class="contact-actions">
+            <a class="primary-button" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">
+              <i class="fa-brands fa-linkedin"></i> Connect on LinkedIn
+            </a>
+
+            <a class="secondary-button" href="https://github.com/rajpatel-aero" target="_blank">
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>© <span id="currentYear"></span> Raj Patel. Aerospace Engineering Portfolio.</p>
+
+      <div class="footer-links">
+        <a href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/rajpatel-aero" target="_blank"><i class="fa-brands fa-github"></i></a>
+        <a href="https://orcid.org/0009-0000-7886-2864" target="_blank"><i class="fa-brands fa-orcid"></i></a>
+      </div>
     </div>
+  </footer>
 
+  <div class="modal-overlay" id="experienceModalOverlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
+      <div class="modal-company-icon">
+        <i class="fa-solid fa-briefcase" id="modalIcon"></i>
+      </div>
 
-    <script>
-        /*
-        ========================================================
-        MOBILE NAVIGATION
-        ========================================================
-        */
+      <h2 id="modalCompany">Company</h2>
+      <p class="modal-role" id="modalRole">Role</p>
 
-        const mobileMenuButton =
-            document.getElementById("mobileMenuButton");
+      <div class="modal-information-grid">
+        <div class="modal-information-item">
+          <small>Employment Type</small>
+          <strong id="modalEmploymentType">—</strong>
+        </div>
 
-        const navLinks =
-            document.getElementById("navLinks");
+        <div class="modal-information-item">
+          <small>Location Type</small>
+          <strong id="modalLocationType">—</strong>
+        </div>
 
+        <div class="modal-information-item">
+          <small>Duration</small>
+          <strong id="modalDuration">—</strong>
+        </div>
 
-        mobileMenuButton.addEventListener("click", function () {
+        <div class="modal-information-item">
+          <small>Industry</small>
+          <strong id="modalIndustry">—</strong>
+        </div>
+      </div>
 
-            navLinks.classList.toggle("show");
+      <div class="modal-description">
+        <h3>Role Description</h3>
+        <p id="modalDescription"></p>
+      </div>
 
-            const icon =
-                mobileMenuButton.querySelector("i");
+      <div class="modal-skills">
+        <h3>Skills and Capabilities</h3>
+        <div class="modal-skill-tags" id="modalSkills"></div>
+      </div>
+    </div>
+  </div>
 
-            if (navLinks.classList.contains("show")) {
-                icon.classList.remove("fa-bars");
-                icon.classList.add("fa-xmark");
-            } else {
-                icon.classList.remove("fa-xmark");
-                icon.classList.add("fa-bars");
-            }
+  <script>
+    const mobileMenuButton = document.getElementById("mobileMenuButton");
+    const navLinks = document.getElementById("navLinks");
 
+    mobileMenuButton.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+      const icon = mobileMenuButton.querySelector("i");
+      icon.className = navLinks.classList.contains("show")
+        ? "fa-solid fa-xmark"
+        : "fa-solid fa-bars";
+    });
+
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => navLinks.classList.remove("show"));
+    });
+
+    const experienceData = {
+      soaron: {
+        company: "Soaron Aerospace Innovation",
+        role: "Aerospace Engineering Intern",
+        employmentType: "Internship",
+        locationType: "On-site / Project Based",
+        duration: "Add confirmed dates",
+        industry: "Aerospace Engineering",
+        icon: "fa-plane-circle-check",
+        description:
+          "Supported aerospace engineering activities involving drone-airframe analysis, structural concepts and engineering calculations. Contributed to robotic-arm calculations and multidisciplinary technical tasks.",
+        skills: [
+          "Drone Airframe Analysis",
+          "Engineering Calculations",
+          "Structural Concepts",
+          "Robotic Systems",
+          "Technical Documentation",
+          "Team Collaboration"
+        ]
+      },
+
+      techcurators: {
+        company: "Techcurators India",
+        role: "Team Member",
+        employmentType: "Add employment type",
+        locationType: "Add location type",
+        duration: "Add confirmed dates",
+        industry: "Professional Services",
+        icon: "fa-chart-line",
+        description:
+          "Worked within a team environment requiring communication, coordination and timely task delivery. Replace this with your confirmed role details.",
+        skills: [
+          "Communication",
+          "Team Coordination",
+          "Time Management",
+          "Task Delivery",
+          "Problem Solving"
+        ]
+      },
+
+      ampol: {
+        company: "Ampol Retail Services",
+        role: "Retail Team Member",
+        employmentType: "Part-time",
+        locationType: "On-site",
+        duration: "December 2025 – Present",
+        industry: "Retail and Customer Service",
+        icon: "fa-store",
+        description:
+          "Provide customer service in a fast-paced retail environment while supporting daily store operations, teamwork, communication and responsible service delivery.",
+        skills: [
+          "Customer Service",
+          "Teamwork",
+          "Communication",
+          "Responsibility",
+          "Time Management",
+          "Problem Solving"
+        ]
+      }
+    };
+
+    const overlay = document.getElementById("experienceModalOverlay");
+
+    function openExperience(key) {
+      const item = experienceData[key];
+      if (!item) return;
+
+      document.getElementById("modalCompany").textContent = item.company;
+      document.getElementById("modalRole").textContent = item.role;
+      document.getElementById("modalEmploymentType").textContent = item.employmentType;
+      document.getElementById("modalLocationType").textContent = item.locationType;
+      document.getElementById("modalDuration").textContent = item.duration;
+      document.getElementById("modalIndustry").textContent = item.industry;
+      document.getElementById("modalDescription").textContent = item.description;
+      document.getElementById("modalIcon").className = "fa-solid " + item.icon;
+
+      const skills = document.getElementById("modalSkills");
+      skills.innerHTML = "";
+
+      item.skills.forEach(skill => {
+        const span = document.createElement("span");
+        span.className = "skill-tag";
+        span.textContent = skill;
+        skills.appendChild(span);
+      });
+
+      overlay.classList.add("show");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeExperience() {
+      overlay.classList.remove("show");
+      document.body.classList.remove("modal-open");
+    }
+
+    document.querySelectorAll(".view-details-button").forEach(button => {
+      button.addEventListener("click", () => openExperience(button.dataset.experience));
+    });
+
+    document.getElementById("modalClose").addEventListener("click", closeExperience);
+
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) closeExperience();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeExperience();
+    });
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
         });
+      },
+      { threshold: 0.12 }
+    );
 
+    document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
 
-        document
-            .querySelectorAll(".nav-links a")
-            .forEach(function (link) {
+    const sections = document.querySelectorAll("main section[id]");
+    const menuLinks = document.querySelectorAll(".nav-links a[href^='#']");
 
-                link.addEventListener("click", function () {
+    function updateNavigation() {
+      let current = "";
 
-                    navLinks.classList.remove("show");
+      sections.forEach(section => {
+        if (window.scrollY >= section.offsetTop - 140) current = section.id;
+      });
 
-                    const icon =
-                        mobileMenuButton.querySelector("i");
-
-                    icon.classList.remove("fa-xmark");
-                    icon.classList.add("fa-bars");
-
-                });
-
-            });
-
-
-        /*
-        ========================================================
-        EXPERIENCE INFORMATION
-        ========================================================
-        */
-
-        const experienceData = {
-
-            soaron: {
-                company: "Soaron Aerospace Innovation",
-
-                role: "Aerospace Engineering Intern",
-
-                employmentType: "Internship",
-
-                locationType: "On-site / Project Based",
-
-                duration: "Add confirmed dates",
-
-                industry: "Aerospace Engineering",
-
-                icon: "fa-plane-circle-check",
-
-                description:
-                    "Supported aerospace engineering activities involving drone airframe analysis, structural concepts and engineering calculations. Contributed to robotic-arm calculations and assisted with technical problem-solving across multidisciplinary project tasks.",
-
-                skills: [
-                    "Drone Airframe Analysis",
-                    "Engineering Calculations",
-                    "Structural Concepts",
-                    "Robotic Systems",
-                    "Technical Documentation",
-                    "Team Collaboration"
-                ]
-            },
-
-
-            techcurators: {
-                company: "Techcurators India",
-
-                role: "Team Member",
-
-                employmentType: "Add employment type",
-
-                locationType: "Add location type",
-
-                duration: "Add confirmed dates",
-
-                industry: "Professional Services",
-
-                icon: "fa-chart-line",
-
-                description:
-                    "Worked within a team environment requiring effective communication, coordination and timely task delivery. Add your exact position, responsibilities and achievements here once the information is confirmed.",
-
-                skills: [
-                    "Communication",
-                    "Team Coordination",
-                    "Time Management",
-                    "Task Delivery",
-                    "Problem Solving",
-                    "Professional Responsibility"
-                ]
-            },
-
-
-            ampol: {
-                company: "Ampol Retail Services",
-
-                role: "Retail Team Member",
-
-                employmentType: "Part-time",
-
-                locationType: "On-site",
-
-                duration: "December 2025 – Present",
-
-                industry: "Retail and Customer Service",
-
-                icon: "fa-store",
-
-                description:
-                    "Provide customer service in a fast-paced retail environment while supporting daily store operations. The role requires teamwork, professional communication, reliability, attention to detail and the ability to manage responsibilities effectively during busy periods.",
-
-                skills: [
-                    "Customer Service",
-                    "Teamwork",
-                    "Communication",
-                    "Responsibility",
-                    "Time Management",
-                    "Problem Solving"
-                ]
-            }
-
-        };
-
-
-        /*
-        ========================================================
-        EXPERIENCE MODAL
-        ========================================================
-        */
-
-        const modalOverlay =
-            document.getElementById("experienceModalOverlay");
-
-        const modalClose =
-            document.getElementById("modalClose");
-
-        const modalCompany =
-            document.getElementById("modalCompany");
-
-        const modalRole =
-            document.getElementById("modalRole");
-
-        const modalEmploymentType =
-            document.getElementById("modalEmploymentType");
-
-        const modalLocationType =
-            document.getElementById("modalLocationType");
-
-        const modalDuration =
-            document.getElementById("modalDuration");
-
-        const modalIndustry =
-            document.getElementById("modalIndustry");
-
-        const modalDescription =
-            document.getElementById("modalDescription");
-
-        const modalSkills =
-            document.getElementById("modalSkills");
-
-        const modalIcon =
-            document.getElementById("modalIcon");
-
-
-        function openExperienceModal(experienceKey) {
-
-            const experience =
-                experienceData[experienceKey];
-
-            if (!experience) {
-                return;
-            }
-
-            modalCompany.textContent =
-                experience.company;
-
-            modalRole.textContent =
-                experience.role;
-
-            modalEmploymentType.textContent =
-                experience.employmentType;
-
-            modalLocationType.textContent =
-                experience.locationType;
-
-            modalDuration.textContent =
-                experience.duration;
-
-            modalIndustry.textContent =
-                experience.industry;
-
-            modalDescription.textContent =
-                experience.description;
-
-
-            modalIcon.className =
-                "fa-solid " + experience.icon;
-
-
-            modalSkills.innerHTML = "";
-
-            experience.skills.forEach(function (skill) {
-
-                const skillElement =
-                    document.createElement("span");
-
-                skillElement.className =
-                    "skill-tag";
-
-                skillElement.textContent =
-                    skill;
-
-                modalSkills.appendChild(skillElement);
-
-            });
-
-
-            modalOverlay.classList.add("show");
-            document.body.classList.add("modal-open");
-
-        }
-
-
-        function closeExperienceModal() {
-
-            modalOverlay.classList.remove("show");
-            document.body.classList.remove("modal-open");
-
-        }
-
-
-        document
-            .querySelectorAll(".view-details-button")
-            .forEach(function (button) {
-
-                button.addEventListener("click", function () {
-
-                    const experienceKey =
-                        button.dataset.experience;
-
-                    openExperienceModal(experienceKey);
-
-                });
-
-            });
-
-
-        modalClose.addEventListener(
-            "click",
-            closeExperienceModal
+      menuLinks.forEach(link => {
+        link.classList.toggle(
+          "active",
+          link.getAttribute("href") === "#" + current
         );
+      });
+    }
 
-
-        modalOverlay.addEventListener(
-            "click",
-            function (event) {
-
-                if (event.target === modalOverlay) {
-                    closeExperienceModal();
-                }
-
-            }
-        );
-
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key === "Escape") {
-                    closeExperienceModal();
-                }
-
-            }
-        );
-
-
-        /*
-        ========================================================
-        SCROLL REVEAL ANIMATION
-        ========================================================
-        */
-
-        const revealElements =
-            document.querySelectorAll(".reveal");
-
-
-        const revealObserver =
-            new IntersectionObserver(
-                function (entries, observer) {
-
-                    entries.forEach(function (entry) {
-
-                        if (entry.isIntersecting) {
-
-                            entry.target.classList.add("visible");
-
-                            observer.unobserve(entry.target);
-
-                        }
-
-                    });
-
-                },
-                {
-                    threshold: 0.12
-                }
-            );
-
-
-        revealElements.forEach(function (element) {
-            revealObserver.observe(element);
-        });
-
-
-        /*
-        ========================================================
-        ACTIVE NAVIGATION LINK
-        ========================================================
-        */
-
-        const pageSections =
-            document.querySelectorAll("main section[id]");
-
-        const navigationLinks =
-            document.querySelectorAll(
-                ".nav-links a[href^='#']"
-            );
-
-
-        function updateActiveNavigation() {
-
-            let currentSection = "";
-
-            pageSections.forEach(function (section) {
-
-                const sectionTop =
-                    section.offsetTop - 140;
-
-                if (window.scrollY >= sectionTop) {
-                    currentSection = section.id;
-                }
-
-            });
-
-
-            navigationLinks.forEach(function (link) {
-
-                link.classList.remove("active");
-
-                if (
-                    link.getAttribute("href") ===
-                    "#" + currentSection
-                ) {
-                    link.classList.add("active");
-                }
-
-            });
-
-        }
-
-
-        window.addEventListener(
-            "scroll",
-            updateActiveNavigation
-        );
-
-
-        /*
-        ========================================================
-        CURRENT YEAR
-        ========================================================
-        */
-
-        document.getElementById("currentYear").textContent =
-            new Date().getFullYear();
-
-    </script>
-
+    window.addEventListener("scroll", updateNavigation);
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
+"""
+
+path = Path("/mnt/data/raj-patel-portfolio-format-review.html")
+path.write_text(html, encoding="utf-8")
+
+print(f"Created: {path}")
