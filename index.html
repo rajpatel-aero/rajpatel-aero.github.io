@@ -1,4 +1,15 @@
 from pathlib import Path
+import shutil
+import zipfile
+
+base = Path("/mnt/data/raj-patel-portfolio-updated")
+images = base / "images"
+base.mkdir(exist_ok=True)
+images.mkdir(exist_ok=True)
+
+src_image = Path("/mnt/data/ChatGPT Image Aug 5, 2026, 02_49_06 PM.png")
+dst_image = images / "raj-patel-profile.png"
+shutil.copy2(src_image, dst_image)
 
 html = """<!DOCTYPE html>
 <html lang="en">
@@ -15,21 +26,25 @@ html = """<!DOCTYPE html>
 
   <style>
     :root{
-      --bg:#050a13;
-      --bg2:#091426;
+      --bg:#030712;
+      --bg-soft:#07111f;
+      --navy:#0a1830;
+      --navy-2:#102747;
       --panel:#0d1c31;
-      --primary:#65b5ff;
-      --primary2:#9ed2ff;
-      --white:#fff;
+      --panel-light:#132b4a;
+      --primary:#5cb8ff;
+      --primary-2:#9bd8ff;
+      --cyan:#22d3ee;
+      --white:#ffffff;
       --light:#f4f7fb;
-      --lightblue:#eaf3ff;
-      --dark:#132238;
-      --muted:#526174;
-      --muted2:#a7b7ca;
-      --line:rgba(130,190,255,.18);
+      --light-blue:#eaf3ff;
+      --text-dark:#132238;
+      --text-medium:#526174;
+      --text-light:#a8b8ca;
+      --line:rgba(120,190,255,.20);
       --border:#dce6f1;
       --shadow:0 18px 50px rgba(9,26,46,.12);
-      --shadowDark:0 25px 70px rgba(0,0,0,.38);
+      --shadow-dark:0 28px 80px rgba(0,0,0,.42);
       --radius:20px;
     }
 
@@ -37,7 +52,7 @@ html = """<!DOCTYPE html>
     html{scroll-behavior:smooth;scroll-padding-top:90px}
     body{
       font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--dark);
+      color:var(--text-dark);
       background:var(--light);
       line-height:1.7;
       overflow-x:hidden;
@@ -49,13 +64,15 @@ html = """<!DOCTYPE html>
     .container{width:min(1160px,calc(100% - 40px));margin:auto}
     .section{padding:100px 0}
     .section-white{background:#fff}
-    .section-light{background:var(--light)}
+    .section-light{background:linear-gradient(180deg,#f6f9fd 0%,#eef4fb 100%)}
     .section-dark{
       color:#fff;
       background:
-        radial-gradient(circle at 80% 15%,rgba(37,99,235,.18),transparent 35%),
-        var(--bg);
+        radial-gradient(circle at 15% 15%,rgba(92,184,255,.18),transparent 28rem),
+        radial-gradient(circle at 85% 20%,rgba(34,211,238,.10),transparent 22rem),
+        linear-gradient(160deg,var(--bg-soft),var(--bg));
     }
+
     .section-heading{max-width:760px;margin-bottom:50px}
     .section-label{
       display:inline-flex;align-items:center;gap:9px;
@@ -69,12 +86,12 @@ html = """<!DOCTYPE html>
       line-height:1.15;letter-spacing:-.045em;
       margin-bottom:16px;font-weight:800
     }
-    .section-description{max-width:680px;color:var(--muted)}
-    .section-dark .section-description{color:var(--muted2)}
+    .section-description{max-width:680px;color:var(--text-medium)}
+    .section-dark .section-description{color:var(--text-light)}
 
     .navbar{
       position:fixed;inset:0 0 auto 0;z-index:1000;
-      background:rgba(5,10,19,.88);
+      background:rgba(3,7,18,.86);
       border-bottom:1px solid rgba(255,255,255,.08);
       backdrop-filter:blur(18px)
     }
@@ -88,7 +105,8 @@ html = """<!DOCTYPE html>
     .nav-links a{color:#d9e5f4;font-size:.9rem;font-weight:700;transition:.3s}
     .nav-links a:hover,.nav-links a.active{color:var(--primary)}
     .nav-contact{
-      padding:10px 17px;background:#2563eb;border-radius:10px;color:#fff!important
+      padding:10px 17px;background:linear-gradient(135deg,#2563eb,#3b82f6);
+      border-radius:10px;color:#fff!important
     }
     .mobile-menu-button{
       display:none;width:44px;height:44px;color:#fff;
@@ -97,29 +115,37 @@ html = """<!DOCTYPE html>
     }
 
     .hero{
-      min-height:780px;padding:145px 0 118px;
+      min-height:800px;padding:145px 0 122px;
       display:flex;align-items:center;position:relative;overflow:hidden;color:#fff;
       background:
-        radial-gradient(circle at 18% 8%,rgba(51,139,230,.24),transparent 30rem),
-        radial-gradient(circle at 88% 18%,rgba(51,139,230,.16),transparent 27rem),
-        linear-gradient(135deg,#06111f 0%,#0a1d36 52%,#071321 100%)
+        radial-gradient(circle at 16% 15%,rgba(59,130,246,.28),transparent 30rem),
+        radial-gradient(circle at 83% 28%,rgba(34,211,238,.15),transparent 24rem),
+        linear-gradient(135deg,#030712 0%,#071426 48%,#0b2140 100%);
     }
     .hero::before{
       content:"";position:absolute;inset:0;
       background-image:
-        linear-gradient(rgba(101,181,255,.04) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(101,181,255,.04) 1px,transparent 1px);
-      background-size:52px 52px
+        linear-gradient(rgba(92,184,255,.045) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(92,184,255,.045) 1px,transparent 1px);
+      background-size:54px 54px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.95),rgba(0,0,0,.15));
+    }
+    .hero::after{
+      content:"";position:absolute;
+      width:520px;height:520px;border-radius:50%;
+      right:-170px;top:90px;
+      background:rgba(46,160,255,.16);
+      filter:blur(45px)
     }
     .hero-grid{
       position:relative;z-index:2;display:grid;
-      grid-template-columns:1.12fr .88fr;gap:70px;align-items:center
+      grid-template-columns:1.08fr .92fr;gap:70px;align-items:center
     }
     .availability-badge{
       display:inline-flex;align-items:center;gap:10px;
       margin-bottom:26px;padding:10px 15px;
-      color:#dcecff;background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
+      color:#dcecff;background:rgba(255,255,255,.065);
+      border:1px solid rgba(255,255,255,.13);
       border-radius:999px;font-size:.82rem;font-weight:700
     }
     .availability-dot{
@@ -132,10 +158,10 @@ html = """<!DOCTYPE html>
     }
     .hero-title span{color:var(--primary)}
     .hero-role{
-      margin-bottom:20px;color:var(--primary2);
+      margin-bottom:20px;color:var(--primary-2);
       font-size:clamp(1.15rem,2vw,1.55rem);font-weight:700
     }
-    .hero-description{max-width:650px;color:#afc0d5;margin-bottom:34px}
+    .hero-description{max-width:650px;color:#b8c7d9;margin-bottom:34px}
     .hero-buttons,.hero-social-links{display:flex;gap:13px;flex-wrap:wrap}
     .hero-buttons{margin-bottom:28px}
     .primary-button,.secondary-button{
@@ -144,12 +170,11 @@ html = """<!DOCTYPE html>
       border-radius:11px;font-size:.9rem;font-weight:800;transition:.3s
     }
     .primary-button{
-      color:var(--bg);
-      background:linear-gradient(135deg,var(--primary2),var(--primary));
-      box-shadow:0 14px 34px rgba(101,181,255,.18)
+      color:#03101d;background:linear-gradient(135deg,var(--primary-2),var(--primary));
+      box-shadow:0 14px 34px rgba(92,184,255,.22)
     }
     .secondary-button{
-      color:#fff;background:rgba(255,255,255,.06);
+      color:#fff;background:rgba(255,255,255,.055);
       border:1px solid rgba(255,255,255,.16)
     }
     .primary-button:hover,.secondary-button:hover{transform:translateY(-3px)}
@@ -158,25 +183,22 @@ html = """<!DOCTYPE html>
       color:#b8c7d9;font-size:.84rem;font-weight:700
     }
     .social-link:hover{color:var(--primary)}
-    .profile-wrapper{display:flex;justify-content:center}
+
+    .profile-wrapper{display:flex;justify-content:center;position:relative}
+    .profile-wrapper::before{
+      content:"";position:absolute;width:360px;height:360px;
+      border-radius:50%;background:rgba(59,130,246,.22);
+      filter:blur(36px);top:50%;left:50%;transform:translate(-50%,-50%)
+    }
     .profile-card{
-      width:min(100%,420px);padding:16px;
-      background:rgba(255,255,255,.075);
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:32px;box-shadow:var(--shadowDark)
+      position:relative;z-index:2;width:min(100%,430px);padding:14px;
+      background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.17);
+      border-radius:30px;box-shadow:var(--shadow-dark)
     }
     .profile-image{
-      width:100%;height:485px;object-fit:cover;
-      object-position:center 20%;border-radius:22px;background:#0d2038
-    }
-    .profile-placeholder{
-      min-height:485px;display:grid;place-items:center;
-      padding:30px;text-align:center;color:var(--muted2);
-      border:1px dashed rgba(255,255,255,.22);border-radius:22px;
-      background:linear-gradient(145deg,rgba(37,99,235,.2),rgba(7,24,43,.95))
-    }
-    .profile-placeholder i{
-      display:block;color:var(--primary);font-size:3.4rem;margin-bottom:14px
+      width:100%;height:500px;object-fit:cover;
+      object-position:center 18%;border-radius:22px;background:#0d2038
     }
 
     .statistics{position:relative;z-index:10;margin-top:-58px}
@@ -190,29 +212,29 @@ html = """<!DOCTYPE html>
     .stat-card:hover{transform:translateY(-8px);border-color:#bcd5f7}
     .stat-icon{
       width:42px;height:42px;display:grid;place-items:center;
-      color:#2563eb;background:var(--lightblue);border-radius:11px
+      color:#2563eb;background:var(--light-blue);border-radius:11px
     }
     .stat-number{
-      margin-top:15px;color:var(--bg2);font-size:2.1rem;
+      margin-top:15px;color:var(--bg-soft);font-size:2.1rem;
       line-height:1;font-weight:800
     }
-    .stat-text{color:var(--muted);font-size:.84rem;font-weight:700}
+    .stat-text{color:var(--text-medium);font-size:.84rem;font-weight:700}
 
     .about-grid{
       display:grid;grid-template-columns:1.1fr .9fr;
       gap:65px;align-items:start
     }
-    .about-content p{margin-bottom:18px;color:var(--muted)}
-    .about-content p:first-of-type{color:var(--dark);font-size:1.1rem;font-weight:600}
+    .about-content p{margin-bottom:18px;color:var(--text-medium)}
+    .about-content p:first-of-type{color:var(--text-dark);font-size:1.1rem;font-weight:600}
     .about-highlight{
       margin-top:30px;padding:24px;display:flex;gap:18px;
-      background:var(--lightblue);border-left:4px solid #2563eb;
+      background:var(--light-blue);border-left:4px solid #2563eb;
       border-radius:0 12px 12px 0
     }
     .about-highlight i{color:#2563eb;font-size:1.4rem;margin-top:4px}
     .profile-information-card{
       padding:34px;color:#fff;
-      background:linear-gradient(145deg,var(--bg2),#102944);
+      background:linear-gradient(145deg,#081426,#102944);
       border-radius:28px;box-shadow:var(--shadow)
     }
     .profile-information-card h3{margin-bottom:25px;font-size:1.45rem}
@@ -238,7 +260,7 @@ html = """<!DOCTYPE html>
     .skill-category:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
     .skill-category-icon{
       width:50px;height:50px;display:grid;place-items:center;
-      color:#2563eb;background:var(--lightblue);
+      color:#2563eb;background:var(--light-blue);
       border-radius:13px;font-size:1.25rem;margin-bottom:20px
     }
     .skill-category h3{margin-bottom:15px}
@@ -265,7 +287,7 @@ html = """<!DOCTYPE html>
       background:rgba(59,130,246,.12);border-radius:13px
     }
     .expertise-card h3{margin-bottom:7px}
-    .expertise-card p{color:var(--muted2);font-size:.86rem}
+    .expertise-card p{color:var(--text-light);font-size:.86rem}
 
     .experience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
     .experience-card{
@@ -280,11 +302,11 @@ html = """<!DOCTYPE html>
     }
     .company-icon{
       width:50px;height:50px;display:grid;place-items:center;
-      color:#2563eb;background:var(--lightblue);
+      color:#2563eb;background:var(--light-blue);
       border-radius:14px;font-size:1.3rem
     }
     .experience-year{
-      padding:6px 9px;color:#2563eb;background:var(--lightblue);
+      padding:6px 9px;color:#2563eb;background:var(--light-blue);
       border-radius:7px;font-size:.72rem;font-weight:800
     }
     .experience-role{
@@ -292,11 +314,11 @@ html = """<!DOCTYPE html>
       font-size:.87rem;font-weight:800
     }
     .experience-summary{
-      margin-bottom:25px;color:var(--muted);font-size:.87rem
+      margin-bottom:25px;color:var(--text-medium);font-size:.87rem
     }
     .view-details-button{
       margin-top:auto;display:inline-flex;align-items:center;gap:9px;
-      border:0;color:var(--dark);background:transparent;font-weight:800
+      border:0;color:var(--text-dark);background:transparent;font-weight:800
     }
     .view-details-button:hover{color:#2563eb}
 
@@ -313,7 +335,7 @@ html = """<!DOCTYPE html>
       background:#fff;border-radius:22px;box-shadow:var(--shadow);font-size:2rem
     }
     .project-placeholder h3{margin-bottom:14px;font-size:1.8rem}
-    .project-placeholder p{color:var(--muted)}
+    .project-placeholder p{color:var(--text-medium)}
 
     .research-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
     .research-card{
@@ -329,14 +351,14 @@ html = """<!DOCTYPE html>
       text-transform:uppercase;letter-spacing:.06em
     }
     .research-card h3{margin-bottom:14px;line-height:1.4}
-    .research-card p{margin-bottom:22px;color:var(--muted2);font-size:.88rem}
+    .research-card p{margin-bottom:22px;color:var(--text-light);font-size:.88rem}
     .research-link{color:var(--primary);font-size:.85rem;font-weight:800}
 
     .contact-grid{
       display:grid;grid-template-columns:.85fr 1.15fr;
       gap:55px;align-items:start
     }
-    .contact-content p{margin-bottom:30px;color:var(--muted)}
+    .contact-content p{margin-bottom:30px;color:var(--text-medium)}
     .contact-list{display:grid;gap:15px}
     .contact-item{
       padding:17px;display:flex;align-items:center;gap:14px;
@@ -344,19 +366,19 @@ html = """<!DOCTYPE html>
     }
     .contact-icon{
       width:42px;height:42px;display:grid;place-items:center;
-      color:#2563eb;background:var(--lightblue);border-radius:11px
+      color:#2563eb;background:var(--light-blue);border-radius:11px
     }
-    .contact-item small{display:block;color:var(--muted);font-size:.72rem}
+    .contact-item small{display:block;color:var(--text-medium);font-size:.72rem}
     .contact-card{
       padding:38px;color:#fff;
-      background:linear-gradient(145deg,var(--bg2),#102944);
+      background:linear-gradient(145deg,#081426,#102944);
       border-radius:28px;box-shadow:var(--shadow)
     }
-    .contact-card p{margin:12px 0 25px;color:var(--muted2)}
+    .contact-card p{margin:12px 0 25px;color:var(--text-light)}
     .contact-actions{display:flex;flex-wrap:wrap;gap:12px}
 
     .footer{
-      padding:30px 0;color:#9dafc3;background:#030b15;
+      padding:30px 0;color:#9dafc3;background:#020611;
       border-top:1px solid rgba(255,255,255,.07)
     }
     .footer-content{
@@ -370,13 +392,13 @@ html = """<!DOCTYPE html>
     .modal-overlay{
       position:fixed;inset:0;z-index:2000;padding:25px;
       display:none;align-items:center;justify-content:center;
-      background:rgba(2,8,16,.8);backdrop-filter:blur(12px)
+      background:rgba(2,8,16,.82);backdrop-filter:blur(12px)
     }
     .modal-overlay.show{display:flex}
     .modal{
       position:relative;width:min(680px,100%);max-height:90vh;
       overflow:auto;padding:40px;background:#fff;
-      border-radius:24px;box-shadow:var(--shadowDark)
+      border-radius:24px;box-shadow:var(--shadow-dark)
     }
     .modal-close{
       position:absolute;top:18px;right:18px;width:42px;height:42px;
@@ -386,7 +408,7 @@ html = """<!DOCTYPE html>
     .modal-company-icon{
       width:58px;height:58px;margin-bottom:22px;
       display:grid;place-items:center;color:#2563eb;
-      background:var(--lightblue);border-radius:16px;font-size:1.5rem
+      background:var(--light-blue);border-radius:16px;font-size:1.5rem
     }
     .modal h2{padding-right:45px}
     .modal-role{margin-bottom:28px;color:#2563eb;font-weight:800}
@@ -399,10 +421,10 @@ html = """<!DOCTYPE html>
       border:1px solid var(--border);border-radius:11px
     }
     .modal-information-item small{
-      display:block;color:var(--muted);font-size:.7rem;
+      display:block;color:var(--text-medium);font-size:.7rem;
       text-transform:uppercase;letter-spacing:.06em
     }
-    .modal-description p{margin:10px 0 23px;color:var(--muted)}
+    .modal-description p{margin:10px 0 23px;color:var(--text-medium)}
 
     .reveal{opacity:0;transform:translateY(30px);transition:.7s}
     .reveal.visible{opacity:1;transform:none}
@@ -420,7 +442,7 @@ html = """<!DOCTYPE html>
       .nav-links{
         position:absolute;top:76px;left:0;width:100%;
         padding:25px;display:none;flex-direction:column;
-        align-items:flex-start;background:rgba(6,17,31,.98)
+        align-items:flex-start;background:rgba(3,7,18,.98)
       }
       .nav-links.show{display:flex}
       .nav-contact{width:100%;text-align:center}
@@ -435,7 +457,7 @@ html = """<!DOCTYPE html>
       .statistics{margin-top:-40px}
       .statistics-grid,.skills-grid,.experience-grid{grid-template-columns:1fr}
       .experience-card:last-child{grid-column:auto}
-      .profile-image,.profile-placeholder{height:420px;min-height:420px}
+      .profile-image{height:420px}
       .modal-information-grid{grid-template-columns:1fr}
       .footer-content{flex-direction:column;text-align:center}
     }
@@ -511,24 +533,11 @@ html = """<!DOCTYPE html>
 
         <div class="profile-wrapper">
           <div class="profile-card">
-
-            <!-- Replace this placeholder after uploading your photo -->
-            <div class="profile-placeholder">
-              <div>
-                <i class="fa-regular fa-image"></i>
-                <strong>Professional Profile Image</strong>
-                <p>Upload your image as images/raj-patel-profile.jpg</p>
-              </div>
-            </div>
-
-            <!-- Then use this:
             <img
               class="profile-image"
-              src="images/raj-patel-profile.jpg"
-              alt="Raj Patel"
+              src="images/raj-patel-profile.png"
+              alt="Raj Patel - Aerospace Engineering Postgraduate"
             >
-            -->
-
           </div>
         </div>
       </div>
@@ -538,34 +547,22 @@ html = """<!DOCTYPE html>
       <div class="container statistics-grid">
         <article class="stat-card reveal">
           <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-          <div>
-            <h2 class="stat-number">2</h2>
-            <p class="stat-text">Aerospace Engineering Degrees</p>
-          </div>
+          <div><h2 class="stat-number">2</h2><p class="stat-text">Aerospace Engineering Degrees</p></div>
         </article>
 
         <article class="stat-card reveal">
           <div class="stat-icon"><i class="fa-solid fa-diagram-project"></i></div>
-          <div>
-            <h2 class="stat-number">7+</h2>
-            <p class="stat-text">Engineering Projects</p>
-          </div>
+          <div><h2 class="stat-number">7+</h2><p class="stat-text">Engineering Projects</p></div>
         </article>
 
         <article class="stat-card reveal">
           <div class="stat-icon"><i class="fa-solid fa-book-open"></i></div>
-          <div>
-            <h2 class="stat-number">2</h2>
-            <p class="stat-text">Published Research Studies</p>
-          </div>
+          <div><h2 class="stat-number">2</h2><p class="stat-text">Published Research Studies</p></div>
         </article>
 
         <article class="stat-card reveal">
           <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
-          <div>
-            <h2 class="stat-number">2</h2>
-            <p class="stat-text">National & International Competitions</p>
-          </div>
+          <div><h2 class="stat-number">2</h2><p class="stat-text">National & International Competitions</p></div>
         </article>
       </div>
     </section>
@@ -579,10 +576,7 @@ html = """<!DOCTYPE html>
 
         <div class="about-grid">
           <div class="about-content reveal">
-            <p>
-              I am currently completing a Master of Engineering in Aerospace
-              Engineering at RMIT University in Melbourne.
-            </p>
+            <p>I am currently completing a Master of Engineering in Aerospace Engineering at RMIT University in Melbourne.</p>
 
             <p>
               My academic and project experience includes aircraft design,
@@ -615,42 +609,27 @@ html = """<!DOCTYPE html>
             <div class="profile-information-list">
               <div class="profile-information-item">
                 <div class="profile-information-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-                <div>
-                  <small>Current Degree</small>
-                  <strong>Master of Engineering (Aerospace Engineering)</strong>
-                </div>
+                <div><small>Current Degree</small><strong>Master of Engineering (Aerospace Engineering)</strong></div>
               </div>
 
               <div class="profile-information-item">
                 <div class="profile-information-icon"><i class="fa-solid fa-building-columns"></i></div>
-                <div>
-                  <small>University</small>
-                  <strong>RMIT University</strong>
-                </div>
+                <div><small>University</small><strong>RMIT University</strong></div>
               </div>
 
               <div class="profile-information-item">
                 <div class="profile-information-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div>
-                  <small>Location</small>
-                  <strong>Melbourne, Australia</strong>
-                </div>
+                <div><small>Location</small><strong>Melbourne, Australia</strong></div>
               </div>
 
               <div class="profile-information-item">
                 <div class="profile-information-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                <div>
-                  <small>Expected Graduation</small>
-                  <strong>December 2026</strong>
-                </div>
+                <div><small>Expected Graduation</small><strong>December 2026</strong></div>
               </div>
 
               <div class="profile-information-item">
                 <div class="profile-information-icon"><i class="fa-solid fa-compass-drafting"></i></div>
-                <div>
-                  <small>Primary Interests</small>
-                  <strong>UAVs, Aircraft Design, Aerodynamics and Propulsion</strong>
-                </div>
+                <div><small>Primary Interests</small><strong>UAVs, Aircraft Design, Aerodynamics and Propulsion</strong></div>
               </div>
             </div>
           </aside>
@@ -663,10 +642,7 @@ html = """<!DOCTYPE html>
         <div class="section-heading reveal">
           <span class="section-label">Skills</span>
           <h2 class="section-title">Tools and engineering capabilities.</h2>
-          <p class="section-description">
-            Aerospace engineering knowledge, numerical analysis,
-            design software and research experience.
-          </p>
+          <p class="section-description">Aerospace engineering knowledge, numerical analysis, design software and research experience.</p>
         </div>
 
         <div class="skills-grid">
@@ -722,34 +698,22 @@ html = """<!DOCTYPE html>
         <div class="expertise-grid">
           <article class="expertise-card reveal">
             <div class="expertise-icon"><i class="fa-solid fa-drafting-compass"></i></div>
-            <div>
-              <h3>Aircraft Conceptual Design</h3>
-              <p>Mission requirements, configuration development, sizing and preliminary system layouts.</p>
-            </div>
+            <div><h3>Aircraft Conceptual Design</h3><p>Mission requirements, configuration development, sizing and preliminary system layouts.</p></div>
           </article>
 
           <article class="expertise-card reveal">
             <div class="expertise-icon"><i class="fa-solid fa-wind"></i></div>
-            <div>
-              <h3>Aerodynamic Analysis</h3>
-              <p>Lift, drag, airfoil behaviour and aircraft-performance evaluation.</p>
-            </div>
+            <div><h3>Aerodynamic Analysis</h3><p>Lift, drag, airfoil behaviour and aircraft-performance evaluation.</p></div>
           </article>
 
           <article class="expertise-card reveal">
             <div class="expertise-icon"><i class="fa-solid fa-gauge-high"></i></div>
-            <div>
-              <h3>Propulsion Integration</h3>
-              <p>Thrust requirements, engine options, fuel consumption and installation constraints.</p>
-            </div>
+            <div><h3>Propulsion Integration</h3><p>Thrust requirements, engine options, fuel consumption and installation constraints.</p></div>
           </article>
 
           <article class="expertise-card reveal">
             <div class="expertise-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-            <div>
-              <h3>Mass, CG and Stability</h3>
-              <p>Component placement, moment calculations, CG estimation and stability assessment.</p>
-            </div>
+            <div><h3>Mass, CG and Stability</h3><p>Component placement, moment calculations, CG estimation and stability assessment.</p></div>
           </article>
         </div>
       </div>
@@ -771,12 +735,8 @@ html = """<!DOCTYPE html>
             </div>
             <h3>Soaron Aerospace Innovation</h3>
             <p class="experience-role">Aerospace Engineering Intern</p>
-            <p class="experience-summary">
-              Drone-airframe analysis, structural concepts and robotic-system calculations.
-            </p>
-            <button class="view-details-button" data-experience="soaron">
-              View experience <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <p class="experience-summary">Drone-airframe analysis, structural concepts and robotic-system calculations.</p>
+            <button class="view-details-button" data-experience="soaron">View experience <i class="fa-solid fa-arrow-right"></i></button>
           </article>
 
           <article class="experience-card reveal">
@@ -786,12 +746,8 @@ html = """<!DOCTYPE html>
             </div>
             <h3>Techcurators India</h3>
             <p class="experience-role">Team Member</p>
-            <p class="experience-summary">
-              Team operations, communication, coordination and task delivery.
-            </p>
-            <button class="view-details-button" data-experience="techcurators">
-              View experience <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <p class="experience-summary">Team operations, communication, coordination and task delivery.</p>
+            <button class="view-details-button" data-experience="techcurators">View experience <i class="fa-solid fa-arrow-right"></i></button>
           </article>
 
           <article class="experience-card reveal">
@@ -801,12 +757,8 @@ html = """<!DOCTYPE html>
             </div>
             <h3>Ampol Retail Services</h3>
             <p class="experience-role">Retail Team Member</p>
-            <p class="experience-summary">
-              Customer service, teamwork and daily retail operations.
-            </p>
-            <button class="view-details-button" data-experience="ampol">
-              View experience <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <p class="experience-summary">Customer service, teamwork and daily retail operations.</p>
+            <button class="view-details-button" data-experience="ampol">View experience <i class="fa-solid fa-arrow-right"></i></button>
           </article>
         </div>
       </div>
@@ -817,20 +769,14 @@ html = """<!DOCTYPE html>
         <div class="section-heading reveal">
           <span class="section-label">Projects</span>
           <h2 class="section-title">Aerospace and engineering projects.</h2>
-          <p class="section-description">
-            This section is intentionally left as a placeholder until you approve
-            the homepage structure and send the final project architecture.
-          </p>
+          <p class="section-description">This section is ready for the final project architecture and project cards.</p>
         </div>
 
         <div class="project-placeholder reveal">
           <div class="project-placeholder-content">
             <div class="project-placeholder-icon"><i class="fa-solid fa-rocket"></i></div>
             <h3>Project section ready</h3>
-            <p>
-              The final version can include project cards, images, role,
-              tools, key outcomes and click-to-open project details.
-            </p>
+            <p>The final version can include project cards, images, role, tools, key outcomes and click-to-open project details.</p>
           </div>
         </div>
       </div>
@@ -848,18 +794,14 @@ html = """<!DOCTYPE html>
             <span class="research-type">Published Research</span>
             <h3>Effect of Vertical location canard with three different locations to make Airplane Eco friendly</h3>
             <p>Study of canard location, aerodynamic behaviour and aircraft efficiency.</p>
-            <a class="research-link" href="https://orcid.org/0009-0000-7886-2864" target="_blank">
-              View research profile
-            </a>
+            <a class="research-link" href="https://orcid.org/0009-0000-7886-2864" target="_blank">View research profile</a>
           </article>
 
           <article class="research-card reveal">
             <span class="research-type">Published Research</span>
             <h3>AI-Based Aircraft Fault Detection and Diagnostics</h3>
             <p>AI, AR and VR technologies for aircraft maintenance and diagnostics.</p>
-            <a class="research-link" href="https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations" target="_blank">
-              View publication
-            </a>
+            <a class="research-link" href="https://www.researchgate.net/publication/394402997_A_Review_and_Innovation_Proposal_on_VRAR_Technologies_for_Aircraft_Maintenance_Training_and_Operations" target="_blank">View publication</a>
           </article>
         </div>
       </div>
@@ -870,10 +812,7 @@ html = """<!DOCTYPE html>
         <div class="contact-content reveal">
           <span class="section-label">Contact</span>
           <h2 class="section-title">Let’s connect.</h2>
-          <p>
-            I am open to graduate roles, internships, research collaboration
-            and aerospace opportunities in Australia.
-          </p>
+          <p>I am open to graduate roles, internships, research collaboration and aerospace opportunities in Australia.</p>
 
           <div class="contact-list">
             <div class="contact-item">
@@ -893,13 +832,8 @@ html = """<!DOCTYPE html>
           <p>Please contact me regarding engineering roles, technical projects or research collaboration.</p>
 
           <div class="contact-actions">
-            <a class="primary-button" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank">
-              <i class="fa-brands fa-linkedin"></i> Connect on LinkedIn
-            </a>
-
-            <a class="secondary-button" href="https://github.com/rajpatel-aero" target="_blank">
-              <i class="fa-brands fa-github"></i> GitHub
-            </a>
+            <a class="primary-button" href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank"><i class="fa-brands fa-linkedin"></i> Connect on LinkedIn</a>
+            <a class="secondary-button" href="https://github.com/rajpatel-aero" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
           </div>
         </div>
       </div>
@@ -909,7 +843,6 @@ html = """<!DOCTYPE html>
   <footer class="footer">
     <div class="container footer-content">
       <p>© <span id="currentYear"></span> Raj Patel. Aerospace Engineering Portfolio.</p>
-
       <div class="footer-links">
         <a href="https://www.linkedin.com/in/rajpatel-aero04/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
         <a href="https://github.com/rajpatel-aero" target="_blank"><i class="fa-brands fa-github"></i></a>
@@ -922,33 +855,15 @@ html = """<!DOCTYPE html>
     <div class="modal">
       <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
 
-      <div class="modal-company-icon">
-        <i class="fa-solid fa-briefcase" id="modalIcon"></i>
-      </div>
-
+      <div class="modal-company-icon"><i class="fa-solid fa-briefcase" id="modalIcon"></i></div>
       <h2 id="modalCompany">Company</h2>
       <p class="modal-role" id="modalRole">Role</p>
 
       <div class="modal-information-grid">
-        <div class="modal-information-item">
-          <small>Employment Type</small>
-          <strong id="modalEmploymentType">—</strong>
-        </div>
-
-        <div class="modal-information-item">
-          <small>Location Type</small>
-          <strong id="modalLocationType">—</strong>
-        </div>
-
-        <div class="modal-information-item">
-          <small>Duration</small>
-          <strong id="modalDuration">—</strong>
-        </div>
-
-        <div class="modal-information-item">
-          <small>Industry</small>
-          <strong id="modalIndustry">—</strong>
-        </div>
+        <div class="modal-information-item"><small>Employment Type</small><strong id="modalEmploymentType">—</strong></div>
+        <div class="modal-information-item"><small>Location Type</small><strong id="modalLocationType">—</strong></div>
+        <div class="modal-information-item"><small>Duration</small><strong id="modalDuration">—</strong></div>
+        <div class="modal-information-item"><small>Industry</small><strong id="modalIndustry">—</strong></div>
       </div>
 
       <div class="modal-description">
@@ -969,10 +884,8 @@ html = """<!DOCTYPE html>
 
     mobileMenuButton.addEventListener("click", () => {
       navLinks.classList.toggle("show");
-      const icon = mobileMenuButton.querySelector("i");
-      icon.className = navLinks.classList.contains("show")
-        ? "fa-solid fa-xmark"
-        : "fa-solid fa-bars";
+      mobileMenuButton.querySelector("i").className =
+        navLinks.classList.contains("show") ? "fa-solid fa-xmark" : "fa-solid fa-bars";
     });
 
     document.querySelectorAll(".nav-links a").forEach(link => {
@@ -988,18 +901,9 @@ html = """<!DOCTYPE html>
         duration: "Add confirmed dates",
         industry: "Aerospace Engineering",
         icon: "fa-plane-circle-check",
-        description:
-          "Supported aerospace engineering activities involving drone-airframe analysis, structural concepts and engineering calculations. Contributed to robotic-arm calculations and multidisciplinary technical tasks.",
-        skills: [
-          "Drone Airframe Analysis",
-          "Engineering Calculations",
-          "Structural Concepts",
-          "Robotic Systems",
-          "Technical Documentation",
-          "Team Collaboration"
-        ]
+        description: "Supported aerospace engineering activities involving drone-airframe analysis, structural concepts and engineering calculations. Contributed to robotic-arm calculations and multidisciplinary technical tasks.",
+        skills: ["Drone Airframe Analysis","Engineering Calculations","Structural Concepts","Robotic Systems","Technical Documentation","Team Collaboration"]
       },
-
       techcurators: {
         company: "Techcurators India",
         role: "Team Member",
@@ -1008,17 +912,9 @@ html = """<!DOCTYPE html>
         duration: "Add confirmed dates",
         industry: "Professional Services",
         icon: "fa-chart-line",
-        description:
-          "Worked within a team environment requiring communication, coordination and timely task delivery. Replace this with your confirmed role details.",
-        skills: [
-          "Communication",
-          "Team Coordination",
-          "Time Management",
-          "Task Delivery",
-          "Problem Solving"
-        ]
+        description: "Worked within a team environment requiring communication, coordination and timely task delivery. Replace this with your confirmed role details.",
+        skills: ["Communication","Team Coordination","Time Management","Task Delivery","Problem Solving"]
       },
-
       ampol: {
         company: "Ampol Retail Services",
         role: "Retail Team Member",
@@ -1027,24 +923,16 @@ html = """<!DOCTYPE html>
         duration: "December 2025 – Present",
         industry: "Retail and Customer Service",
         icon: "fa-store",
-        description:
-          "Provide customer service in a fast-paced retail environment while supporting daily store operations, teamwork, communication and responsible service delivery.",
-        skills: [
-          "Customer Service",
-          "Teamwork",
-          "Communication",
-          "Responsibility",
-          "Time Management",
-          "Problem Solving"
-        ]
+        description: "Provide customer service in a fast-paced retail environment while supporting daily store operations, teamwork, communication and responsible service delivery.",
+        skills: ["Customer Service","Teamwork","Communication","Responsibility","Time Management","Problem Solving"]
       }
     };
 
     const overlay = document.getElementById("experienceModalOverlay");
 
-    function openExperience(key) {
+    function openExperience(key){
       const item = experienceData[key];
-      if (!item) return;
+      if(!item) return;
 
       document.getElementById("modalCompany").textContent = item.company;
       document.getElementById("modalRole").textContent = item.role;
@@ -1069,7 +957,7 @@ html = """<!DOCTYPE html>
       document.body.classList.add("modal-open");
     }
 
-    function closeExperience() {
+    function closeExperience(){
       overlay.classList.remove("show");
       document.body.classList.remove("modal-open");
     }
@@ -1081,42 +969,35 @@ html = """<!DOCTYPE html>
     document.getElementById("modalClose").addEventListener("click", closeExperience);
 
     overlay.addEventListener("click", event => {
-      if (event.target === overlay) closeExperience();
+      if(event.target === overlay) closeExperience();
     });
 
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape") closeExperience();
+      if(event.key === "Escape") closeExperience();
     });
 
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.12});
 
-    document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 
     const sections = document.querySelectorAll("main section[id]");
     const menuLinks = document.querySelectorAll(".nav-links a[href^='#']");
 
-    function updateNavigation() {
+    function updateNavigation(){
       let current = "";
-
       sections.forEach(section => {
-        if (window.scrollY >= section.offsetTop - 140) current = section.id;
+        if(window.scrollY >= section.offsetTop - 140) current = section.id;
       });
 
       menuLinks.forEach(link => {
-        link.classList.toggle(
-          "active",
-          link.getAttribute("href") === "#" + current
-        );
+        link.classList.toggle("active", link.getAttribute("href") === "#" + current);
       });
     }
 
@@ -1127,7 +1008,13 @@ html = """<!DOCTYPE html>
 </html>
 """
 
-path = Path("/mnt/data/raj-patel-portfolio-format-review.html")
-path.write_text(html, encoding="utf-8")
+index_path = base / "index.html"
+index_path.write_text(html, encoding="utf-8")
 
-print(f"Created: {path}")
+zip_path = Path("/mnt/data/raj-patel-portfolio-updated.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(index_path, "index.html")
+    z.write(dst_image, "images/raj-patel-profile.png")
+
+print(f"Created HTML: {index_path}")
+print(f"Created ZIP: {zip_path}")
